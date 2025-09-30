@@ -1,0 +1,36 @@
+{
+  "name": "customer-nexus-hub",
+  "version": "1.0.0",
+  "description": "Customer Nexus Hub - A modern CRM platform for customer relationship management",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "dev:backend": "pnpm --filter @cnh/backend dev",
+    "dev:frontend": "pnpm --filter @cnh/frontend dev",
+    "build": "pnpm run --recursive build",
+    "build:backend": "pnpm --filter @cnh/backend build",
+    "build:frontend": "pnpm --filter @cnh/frontend build",
+    "test": "pnpm run --recursive test",
+    "test:backend": "pnpm --filter @cnh/backend test",
+    "test:frontend": "pnpm --filter @cnh/frontend test",
+    "lint": "pnpm run --recursive lint",
+    "format": "pnpm run --recursive format",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "db:migrate": "pnpm --filter @cnh/backend db:migrate",
+    "db:seed": "pnpm --filter @cnh/backend db:seed"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.14.0"
+}
