@@ -3,13 +3,13 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export default registerAs('database', (): TypeOrmModuleOptions => ({
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT, 10) || 5432,
-  username: process.env.DB_USERNAME || 'cnh_user',
-  password: process.env.DB_PASSWORD || 'cnh_password',
-  database: process.env.DB_NAME || 'cnh_db',
+  host: process.env.DATABASE_HOST || 'localhost',
+  port: parseInt(process.env.DATABASE_PORT || '5432', 10),
+  username: process.env.DATABASE_USERNAME || 'crm_user',
+  password: process.env.DATABASE_PASSWORD || 'crmpass123',
+  database: process.env.DATABASE_NAME || 'customer_nexus_hub',
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  synchronize: process.env.NODE_ENV === 'development',
+  synchronize: false, // Disable auto-sync to avoid index conflicts
   logging: process.env.NODE_ENV === 'development',
   migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
   migrationsRun: true,

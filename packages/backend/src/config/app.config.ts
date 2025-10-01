@@ -2,15 +2,15 @@ import { registerAs } from '@nestjs/config';
 
 export default registerAs('app', () => ({
   nodeEnv: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT, 10) || 3000,
+  port: parseInt(process.env.PORT || '3000', 10),
   name: process.env.APP_NAME || 'Customer Nexus Hub',
   version: process.env.APP_VERSION || '1.0.0',
   cors: {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   },
   rateLimit: {
-    ttl: parseInt(process.env.RATE_LIMIT_TTL, 10) || 60,
-    limit: parseInt(process.env.RATE_LIMIT_LIMIT, 10) || 100,
+    ttl: parseInt(process.env.RATE_LIMIT_TTL || '60', 10),
+    limit: parseInt(process.env.RATE_LIMIT_LIMIT || '100', 10),
   },
   swagger: {
     enabled: process.env.SWAGGER_ENABLED === 'true',

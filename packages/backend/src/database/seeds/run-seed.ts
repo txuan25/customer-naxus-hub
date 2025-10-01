@@ -16,13 +16,13 @@ dotenv.config({ path: '../../../.env' });
 // Create data source for seeding
 const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  username: process.env.DB_USERNAME || 'cnh_user',
-  password: process.env.DB_PASSWORD || 'cnh_password',
-  database: process.env.DB_NAME || 'cnh_db',
+  host: process.env.DATABASE_HOST || 'localhost',
+  port: parseInt(process.env.DATABASE_PORT || '5432', 10),
+  username: process.env.DATABASE_USERNAME || 'crm_user',
+  password: process.env.DATABASE_PASSWORD || 'crmpass123',
+  database: process.env.DATABASE_NAME || 'customer_hub_db',
   entities: [User, Customer, Inquiry, Response],
-  synchronize: true, // Be careful with this in production
+  synchronize: false, // Don't use synchronize, we use migrations
   logging: false,
 });
 

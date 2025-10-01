@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
 import { CacheModule } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-ioredis-yet';
+import * as redisStore from 'cache-manager-redis-yet';
 import * as Joi from 'joi';
 
 // Configuration imports
@@ -12,19 +12,18 @@ import databaseConfig from './config/database.config';
 import redisConfig from './config/redis.config';
 import jwtConfig from './config/jwt.config';
 
-// Module imports (to be implemented)
-// import { AuthModule } from './modules/auth/auth.module';
-// import { UsersModule } from './modules/users/users.module';
-// import { CustomersModule } from './modules/customers/customers.module';
-// import { InquiriesModule } from './modules/inquiries/inquiries.module';
-// import { ResponsesModule } from './modules/responses/responses.module';
-// import { HealthModule } from './modules/health/health.module';
+// Module imports
+import { AuthModule } from './modules/auth/auth.module';
+import { CustomersModule } from './modules/customers/customers.module';
+import { InquiriesModule } from './modules/inquiries/inquiries.module';
+import { ResponsesModule } from './modules/responses/responses.module';
 
 @Module({
   imports: [
     // Configuration
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env', '../.env'],
       load: [
         appConfig,
         databaseConfig,
@@ -54,19 +53,24 @@ import jwtConfig from './config/jwt.config';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('database.host'),
-        port: configService.get('database.port'),
-        username: configService.get('database.username'),
-        password: configService.get('database.password'),
-        database: configService.get('database.name'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('database.synchronize'),
-        logging: configService.get('database.logging'),
-        ssl: configService.get('database.ssl'),
-        extra: configService.get('database.extra'),
-      }),
+      useFactory: (configService: ConfigService) => {
+        // Get the entire database config object
+        const dbConfig = configService.get('database');
+        return {
+          type: 'postgres',
+          host: dbConfig.host,
+          port: dbConfig.port,
+          username: dbConfig.username,
+          password: dbConfig.password,
+          database: dbConfig.database, // Note: 'database', not 'name'
+          entities: dbConfig.entities,
+          synchronize: dbConfig.synchronize,
+          logging: dbConfig.logging,
+          migrations: dbConfig.migrations,
+          migrationsRun: dbConfig.migrationsRun,
+          extra: dbConfig.extra,
+        };
+      },
     }),
 
     // Bull Queue
@@ -99,22 +103,22 @@ import jwtConfig from './config/jwt.config';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         store: await redisStore.redisStore({
-          host: configService.get('redis.host'),
-          port: configService.get('redis.port'),
+          socket: {
+            host: configService.get('redis.host'),
+            port: configService.get('redis.port'),
+          },
           password: configService.get('redis.password'),
-          db: configService.get('redis.cache.db'),
-          ttl: configService.get('redis.cache.ttl'),
+          database: configService.get('redis.cache.db'),
         }),
+        ttl: configService.get('redis.cache.ttl'),
       }),
     }),
 
-    // Feature Modules (to be uncommented as they are implemented)
-    // AuthModule,
-    // UsersModule,
-    // CustomersModule,
-    // InquiriesModule,
-    // ResponsesModule,
-    // HealthModule,
+    // Feature Modules
+    AuthModule,
+    CustomersModule,
+    InquiriesModule,
+    ResponsesModule,
   ],
   controllers: [],
   providers: [],

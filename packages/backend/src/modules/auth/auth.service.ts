@@ -70,7 +70,7 @@ export class AuthService {
   async refreshToken(refreshToken: string): Promise<AuthResponse> {
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(refreshToken, {
-        secret: this.configService.get<string>('jwt.refresh.secret'),
+        secret: this.configService.get<string>('jwt.refreshSecret'),
       });
 
       if (payload.type !== 'refresh') {
@@ -116,8 +116,8 @@ export class AuthService {
     };
 
     const refreshToken = this.jwtService.sign(refreshPayload, {
-      secret: this.configService.get<string>('jwt.refresh.secret'),
-      expiresIn: this.configService.get<string>('jwt.refresh.expiresIn'),
+      secret: this.configService.get<string>('jwt.refreshSecret'),
+      expiresIn: this.configService.get<string>('jwt.refreshExpiresIn'),
     });
 
     return {

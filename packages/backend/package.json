@@ -20,11 +20,16 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "npm run typeorm migration:generate -- -d src/config/typeorm.config.ts",
-    "migration:run": "npm run typeorm migration:run -- -d src/config/typeorm.config.ts",
-    "migration:revert": "npm run typeorm migration:revert -- -d src/config/typeorm.config.ts",
+    "migration:create": "typeorm-ts-node-commonjs migration:create",
+    "migration:generate": "typeorm-ts-node-commonjs -d src/config/typeorm.config.ts migration:generate",
+    "migration:run": "typeorm-ts-node-commonjs -d src/config/typeorm.config.ts migration:run",
+    "migration:revert": "typeorm-ts-node-commonjs -d src/config/typeorm.config.ts migration:revert",
+    "migration:show": "typeorm-ts-node-commonjs -d src/config/typeorm.config.ts migration:show",
     "db:migrate": "npm run migration:run",
-    "db:seed": "ts-node src/database/seeds/run-seed.ts"
+    "db:seed": "ts-node src/database/seeds/run-seed.ts",
+    "seed:basic": "ts-node -r tsconfig-paths/register src/database/seed-basic.ts",
+    "seed:full": "ts-node -r tsconfig-paths/register src/database/seed.ts",
+    "create:admin": "ts-node -r tsconfig-paths/register src/database/create-admin.ts"
   },
   "dependencies": {
     "@nestjs/bull": "^10.0.1",
@@ -41,6 +46,7 @@
     "bcrypt": "^5.1.1",
     "bull": "^4.11.5",
     "cache-manager": "^5.3.2",
+    "cache-manager-redis-yet": "^4.1.2",
     "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
@@ -54,7 +60,10 @@
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.0",
     "typeorm": "^0.3.17",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "joi": "^17.11.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",

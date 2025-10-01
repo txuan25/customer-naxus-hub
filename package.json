@@ -1,36 +1,37 @@
 {
   "name": "customer-nexus-hub",
   "version": "1.0.0",
-  "description": "Customer Nexus Hub - A modern CRM platform for customer relationship management",
+  "description": "CRM Platform Monorepo",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "dev": "pnpm run --parallel dev",
-    "dev:backend": "pnpm --filter @cnh/backend dev",
-    "dev:frontend": "pnpm --filter @cnh/frontend dev",
-    "build": "pnpm run --recursive build",
-    "build:backend": "pnpm --filter @cnh/backend build",
-    "build:frontend": "pnpm --filter @cnh/frontend build",
-    "test": "pnpm run --recursive test",
-    "test:backend": "pnpm --filter @cnh/backend test",
-    "test:frontend": "pnpm --filter @cnh/frontend test",
-    "lint": "pnpm run --recursive lint",
-    "format": "pnpm run --recursive format",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f",
-    "db:migrate": "pnpm --filter @cnh/backend db:migrate",
-    "db:seed": "pnpm --filter @cnh/backend db:seed"
+    "dev": "pnpm run dev:backend",
+    "dev:backend": "cd packages/backend && pnpm run dev",
+    "dev:frontend": "cd packages/frontend && pnpm run dev",
+    "build": "pnpm run build:backend",
+    "build:backend": "cd packages/backend && pnpm run build",
+    "build:frontend": "cd packages/frontend && pnpm run build",
+    "start:backend": "cd packages/backend && pnpm run start:prod",
+    "start:frontend": "cd packages/frontend && pnpm run preview",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "seed": "cd packages/backend && pnpm run seed:full",
+    "migration:run": "cd packages/backend && pnpm run migration:run",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:restart": "docker compose restart",
+    "setup": "pnpm install && pnpm run docker:up && sleep 5 && pnpm run migration:run && pnpm run seed",
+    "quick-start": "pnpm run docker:up && pnpm run dev:backend"
   },
   "devDependencies": {
-    "@types/node": "^20.10.5",
+    "@types/node": "^20.3.1",
     "typescript": "^5.3.3"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
-  },
-  "packageManager": "pnpm@8.14.0"
+  }
 }

@@ -3,10 +3,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
-import * as compression from 'compression';
-import * as cookieParser from 'cookie-parser';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { globalRateLimiter } from './common/middleware/rate-limit.middleware';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
@@ -48,8 +47,7 @@ async function bootstrap() {
     } : false,
   }));
 
-  // Global Rate Limiting
-  app.use(globalRateLimiter);
+  // Global Rate Limiting is handled by ThrottlerModule in app.module.ts
 
   // Enable CORS with credentials
   app.enableCors({

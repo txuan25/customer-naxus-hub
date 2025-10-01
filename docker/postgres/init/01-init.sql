@@ -1,18 +1,21 @@
--- Create database and extensions
-CREATE DATABASE cnh_db;
+-- Create the database
+CREATE DATABASE customer_nexus_hub;
 
-\c cnh_db;
+-- Create user
+CREATE USER crm_user WITH PASSWORD 'crmpass123';
 
--- Enable UUID extension
+-- Grant all privileges on database
+GRANT ALL PRIVILEGES ON DATABASE customer_nexus_hub TO crm_user;
+
+-- Connect to the database
+\c customer_nexus_hub;
+
+-- Grant schema permissions
+GRANT ALL ON SCHEMA public TO crm_user;
+
+-- Create extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Create custom types
-CREATE TYPE user_role AS ENUM ('admin', 'manager', 'cso');
-CREATE TYPE customer_status AS ENUM ('active', 'inactive', 'prospect');
-CREATE TYPE inquiry_status AS ENUM ('open', 'in_progress', 'pending_approval', 'approved', 'rejected', 'closed');
-CREATE TYPE inquiry_priority AS ENUM ('low', 'medium', 'high', 'urgent');
-CREATE TYPE response_status AS ENUM ('draft', 'pending_approval', 'approved', 'rejected', 'sent');
-
--- Grant permissions
-GRANT ALL PRIVILEGES ON DATABASE cnh_db TO cnh_user;
-GRANT ALL ON SCHEMA public TO cnh_user;
+-- Ensure crm_user can create tables
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO crm_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO crm_user;
