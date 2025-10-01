@@ -1,0 +1,23 @@
+{
+    "mcpServers": {
+        "serena": {
+            "command": "uvx",
+            "args": [
+                "--from",
+                "git+https://github.com/oraios/serena",
+                "serena",
+                "start-mcp-server",
+                "--project",
+                "/home/txuan/wspace"
+            ]
+        },
+        "postgres": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-postgres",
+                "postgresql://crm_user:crmpass123@localhost:5432/customer_nexus_hub"
+            ]
+        }
+    }
+}

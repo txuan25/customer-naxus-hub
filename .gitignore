@@ -134,6 +134,3 @@ tmp/
 temp/
 .tmp/
 
-# Documentation files (ignore for now)
-*.md
-*.MD

@@ -2,8 +2,13 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
   "testEnvironment": "node",
-  "testRegex": ".e2e-spec.ts$",
+  "testRegex": "auth.e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
-  }
+  },
+  "moduleNameMapper": {
+    "^@entities/(.*)$": "<rootDir>/../src/database/entities/$1",
+    "^@common/(.*)$": "<rootDir>/../src/common/$1"
+  },
+  "setupFilesAfterEnv": ["<rootDir>/setup-e2e.ts"]
 }
