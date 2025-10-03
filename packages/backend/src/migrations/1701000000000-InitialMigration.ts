@@ -302,11 +302,6 @@ export class InitialMigration1701000000000 implements MigrationInterface {
             type: 'uuid',
           },
           {
-            name: 'approved_by_id',
-            type: 'uuid',
-            isNullable: true,
-          },
-          {
             name: 'created_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
@@ -346,11 +341,6 @@ export class InitialMigration1701000000000 implements MigrationInterface {
       FOREIGN KEY ("responder_id") REFERENCES "users"("id") ON DELETE RESTRICT
     `);
 
-    await queryRunner.query(`
-      ALTER TABLE "responses"
-      ADD CONSTRAINT "FK_response_approvedBy"
-      FOREIGN KEY ("approved_by_id") REFERENCES "users"("id") ON DELETE SET NULL
-    `);
 
     // Create indexes for better performance
     await queryRunner.query(`CREATE INDEX "IDX_USER_EMAIL" ON "users" ("email")`);
@@ -375,7 +365,6 @@ export class InitialMigration1701000000000 implements MigrationInterface {
     await queryRunner.query(`DROP INDEX "IDX_USER_EMAIL"`);
 
     // Drop foreign keys
-    await queryRunner.query('ALTER TABLE "responses" DROP CONSTRAINT "FK_response_approvedBy"');
     await queryRunner.query('ALTER TABLE "responses" DROP CONSTRAINT "FK_response_responder"');
     await queryRunner.query('ALTER TABLE "responses" DROP CONSTRAINT "FK_response_inquiry"');
     await queryRunner.query('ALTER TABLE "inquiries" DROP CONSTRAINT "FK_inquiry_assignee"');

@@ -1,6 +1,7 @@
-import { IsOptional, IsPositive, IsString, Min, IsBoolean } from 'class-validator';
+import { IsOptional, IsPositive, IsString, Min, IsBoolean, IsArray, IsEnum } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
+import { InquiryStatus } from '../enums/inquiry-status.enum';
 
 export class PaginationDto {
   @ApiPropertyOptional({ default: 1, description: 'Page number' })
@@ -32,4 +33,18 @@ export class PaginationDto {
   @Transform(({ value }) => value === 'true' || value === true)
   @IsBoolean()
   assignedToMe?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Filter by inquiry status (can be a single status or comma-separated list)',
+    example: 'pending,in_progress'
+  })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (!value) return value;
+    if (typeof value === 'string') {
+      return value.includes(',') ? value.split(',').map(s => s.trim()) : value;
+    }
+    return value;
+  })
+  status?: InquiryStatus | InquiryStatus[] | string | string[];
 }

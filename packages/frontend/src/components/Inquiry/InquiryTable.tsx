@@ -116,7 +116,6 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
           )}
         </Space>
       ),
-      sorter: (a, b) => getCustomerName(a).localeCompare(getCustomerName(b)),
     },
     {
       title: 'Subject',
@@ -124,7 +123,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
       key: 'subject',
       render: (subject: string, inquiry) => (
         <Space direction="vertical" size={0}>
-          <Text strong style={{ cursor: 'pointer' }} 
+          <Text strong style={{ cursor: 'pointer' }}
                 onClick={() => show('inquiries', inquiry.id)}>
             {subject}
           </Text>
@@ -133,7 +132,6 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
           </Text>
         </Space>
       ),
-      sorter: (a, b) => a.subject.localeCompare(b.subject),
     },
     {
       title: 'Priority',
@@ -142,15 +140,6 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
       render: (priority: InquiryPriority) => (
         <PriorityBadge priority={priority} />
       ),
-      filters: Object.values(InquiryPriority).map(priority => ({
-        text: priority.charAt(0).toUpperCase() + priority.slice(1),
-        value: priority,
-      })),
-      onFilter: (value, record) => record.priority === value,
-      sorter: (a, b) => {
-        const priorityOrder = [InquiryPriority.LOW, InquiryPriority.MEDIUM, InquiryPriority.HIGH, InquiryPriority.URGENT];
-        return priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
-      },
     },
     {
       title: 'Status',
@@ -159,11 +148,6 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
       render: (status: InquiryStatus) => (
         <StatusBadge status={status} />
       ),
-      filters: Object.values(InquiryStatus).map(status => ({
-        text: status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-        value: status,
-      })),
-      onFilter: (value, record) => record.status === value,
     },
     {
       title: 'Date',
@@ -174,8 +158,6 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
           <Text>{formatDate(date)}</Text>
         </Tooltip>
       ),
-      sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      defaultSortOrder: undefined, // Remove default sort to enable smart sorting
     },
     {
       title: 'Actions',
@@ -217,7 +199,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
       data={inquiries}
       loading={loading}
       pagination={pagination}
-      searchable={true}
+      searchable={false}
       onSearch={onSearch}
     />
   );

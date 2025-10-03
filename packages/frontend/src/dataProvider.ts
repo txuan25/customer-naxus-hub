@@ -36,20 +36,29 @@ export const dataProvider: DataProvider = {
 
     // Add filters to query params
     if (filters) {
+      console.log('DataProvider filters received:', filters);
       filters.forEach((filter) => {
+        console.log('Processing filter:', filter);
         if (filter.operator === "eq" && filter.value) {
           if (filter.field === "assignedToMe") {
+            console.log('Adding assignedToMe filter:', filter.value);
             params.append("assignedToMe", filter.value);
           } else if (filter.field === "status" && Array.isArray(filter.value)) {
             // Handle multiple status values
             const statusValues = filter.value.join(",");
+            console.log('Adding status filter:', statusValues);
             params.append("status", statusValues);
           } else {
+            console.log('Adding generic filter:', filter.field, filter.value);
             params.append(filter.field, filter.value);
           }
+        } else {
+          console.log('Skipping filter (no value or wrong operator):', filter);
         }
       });
     }
+
+    console.log('Final URL params:', params.toString());
 
     // Add sorting to query params
     if (sorters) {

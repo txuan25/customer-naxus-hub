@@ -59,16 +59,6 @@ export class InquiriesController {
     @Query('assignedTo') assignedTo?: string,
     @CurrentUser() user?: any,
   ) {
-    console.log('DEBUG: Current user in controller:', {
-      user,
-      userKeys: user ? Object.keys(user) : null,
-      userId: user?.id,
-      userRole: user?.role,
-      assignedToMe: paginationDto.assignedToMe,
-      status: status,
-      statusType: Array.isArray(status) ? 'array' : typeof status,
-    });
-
     // Handle multiple status values from query params like ?status=pending&status=in_progress
     let processedStatus = status;
     if (typeof status === 'string' && status.includes(',')) {

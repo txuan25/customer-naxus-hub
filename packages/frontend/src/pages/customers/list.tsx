@@ -24,11 +24,23 @@ const { Title } = Typography;
 export const CustomerList: React.FC = () => {
   const { create } = useNavigation();
   const { data: identity } = useGetIdentity<User>();
+  const [current, setCurrent] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(25);
 
   const {
     query: { data: customerData, isLoading, refetch }
   } = useList({
     resource: 'customers',
+    pagination: {
+      current,
+      pageSize,
+      mode: 'server',
+    } as any,
+    queryOptions: {
+      // Force re-fetch when pagination changes
+      refetchOnWindowFocus: false,
+      queryKey: ['customers', current, pageSize],
+    },
   });
 
   const customers = (customerData?.data || []) as any[];
@@ -94,11 +106,15 @@ export const CustomerList: React.FC = () => {
           customers={customers}
           loading={isLoading}
           pagination={{
-            current: 1,
-            pageSize: 25,
+            current,
+            pageSize,
             total: total,
             showSizeChanger: true,
             pageSizeOptions: ['10', '25', '50', '100'],
+            onChange: (page, size) => {
+              setCurrent(page);
+              if (size) setPageSize(size);
+            },
           }}
         />
       </Card>

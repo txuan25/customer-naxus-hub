@@ -26,12 +26,14 @@ export interface Customer {
   address?: string;
   city?: string;
   country?: string;
-  postalCode?: string;
-  notes?: string;
+  status: CustomerStatus;
+  segment: CustomerSegment;
+  totalSpent: number;
+  orderCount: number;
+  lastOrderDate?: string;
+  metadata?: Record<string, any>;
   createdAt: string;
   updatedAt?: string;
-  assignedTo?: User;
-  createdBy?: User;
 }
 
 // Customer creation/update DTOs
@@ -56,6 +58,20 @@ export interface CustomerListResponse {
   total: number;
   page: number;
   limit: number;
+}
+
+// Customer enums
+export enum CustomerStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  SUSPENDED = 'suspended',
+}
+
+export enum CustomerSegment {
+  PREMIUM = 'premium',
+  STANDARD = 'standard',
+  BASIC = 'basic',
+  VIP = 'vip',
 }
 
 // Inquiry enums
@@ -135,27 +151,13 @@ export interface InquiryReference {
 export interface Response {
   id: string;
   responseText: string;
-  message: string;
   status: ResponseStatus;
   inquiryId: string;
   inquiry?: InquiryReference;
   responder: User;
   responderId: string;
-  respondedBy: User;
-  respondedById: string;
-  approvedBy?: User;
-  approvedById?: string;
   approvalNotes?: string;
   rejectionReason?: string;
-  attachments?: Array<{
-    filename: string;
-    url: string;
-    size: number;
-    mimeType: string;
-  }>;
-  emailSent: boolean;
-  emailSentAt?: string;
-  subject?: string;
   metadata?: Record<string, any>;
   sentAt?: string;
   approvedAt?: string;
@@ -168,6 +170,19 @@ export interface Response {
 export interface CreateResponseDto {
   responseText: string;
   inquiryId: string;
+  status?: ResponseStatus;
+}
+
+export interface UpdateResponseDto {
+  responseText?: string;
+  status?: ResponseStatus;
+}
+
+export interface UpdateInquiryDto {
+  status?: InquiryStatus;
+  assignedTo?: string;
+  priority?: InquiryPriority;
+  category?: string;
 }
 
 export interface ApproveResponseDto {

@@ -34,13 +34,6 @@ export class InquiriesService {
   ) {
     const { page = 1, limit = 10, sortBy, sortOrder = 'DESC' } = paginationDto;
     
-    console.log('DEBUG: Service findAll - currentUser:', {
-      currentUser,
-      currentUserKeys: currentUser ? Object.keys(currentUser) : null,
-      sortBy,
-      sortOrder,
-    });
-    
     const query = this.inquiryRepository.createQueryBuilder('inquiry');
     query.leftJoinAndSelect('inquiry.customer', 'customer');
     query.leftJoinAndSelect('inquiry.responses', 'responses');
@@ -53,7 +46,9 @@ export class InquiriesService {
     // Note: When assignedToMe is false or undefined, CSOs can see all inquiries
 
     if (filters?.status) {
-      query.andWhere('inquiry.status = :status', { status: filters.status });
+      // Handle both single status and array of statuses
+      const statuses = Array.isArray(filters.status) ? filters.status : [filters.status];
+      query.andWhere('inquiry.status IN (:...statuses)', { statuses });
     }
 
     if (filters?.priority) {

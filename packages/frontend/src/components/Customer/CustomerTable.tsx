@@ -76,10 +76,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
 
   const canEdit = (customer: Customer): boolean => {
     if (!identity) return false;
-    // CSO can edit assigned customers, Manager can edit all
-    if (identity.role === UserRole.CSO) {
-      return customer.assignedTo?.id === identity.id;
-    }
+    // Manager can edit all customers
     return identity.role === UserRole.MANAGER;
   };
 
@@ -107,7 +104,6 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
           </Text>
         </Space>
       ),
-      sorter: (a, b) => getFullNameUtil(a.firstName, a.lastName).localeCompare(getFullNameUtil(b.firstName, b.lastName)),
     },
     {
       title: 'Email',
@@ -118,43 +114,18 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
           {email}
         </Text>
       ),
-      sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
       title: 'Company',
       dataIndex: 'company',
       key: 'company',
       render: (company?: string) => company || <Text type="secondary">-</Text>,
-      sorter: (a, b) => (a.company || '').localeCompare(b.company || ''),
     },
     {
       title: 'Phone',
       dataIndex: 'phone',
       key: 'phone',
       render: (phone?: string) => phone || <Text type="secondary">-</Text>,
-    },
-    {
-      title: 'Assigned To',
-      key: 'assignedTo',
-      render: (_, customer) => (
-        customer.assignedTo ? (
-          <Space>
-            <UserOutlined />
-            <Text>{getFullNameUtil(customer.assignedTo.firstName, customer.assignedTo.lastName)}</Text>
-          </Space>
-        ) : (
-          <Text type="secondary">Unassigned</Text>
-        )
-      ),
-      filters: identity?.role === UserRole.MANAGER ? [
-        { text: 'Assigned', value: 'assigned' },
-        { text: 'Unassigned', value: 'unassigned' },
-      ] : undefined,
-      onFilter: (value, record) => {
-        if (value === 'assigned') return !!record.assignedTo;
-        if (value === 'unassigned') return !record.assignedTo;
-        return true;
-      },
     },
     {
       title: 'Created',
@@ -165,8 +136,6 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
           <Text>{formatDate(date)}</Text>
         </Tooltip>
       ),
-      sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      defaultSortOrder: 'descend',
     },
     {
       title: 'Actions',
@@ -221,7 +190,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       data={customers}
       loading={loading}
       pagination={pagination}
-      searchable={true}
+      searchable={false}
       onSearch={onSearch}
     />
   );

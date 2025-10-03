@@ -8,6 +8,7 @@ import {
   Index,
 } from 'typeorm';
 import { CustomerStatus } from '../../common/enums/customer-status.enum';
+import { CustomerSegment } from '../../common/enums/customer-segment.enum';
 import { Inquiry } from './inquiry.entity';
 
 @Entity('customers')
@@ -43,18 +44,18 @@ export class Customer {
 
   @Column({
     type: 'enum',
-    enum: ['active', 'inactive', 'suspended'],
-    default: 'active',
+    enum: CustomerStatus,
+    default: CustomerStatus.ACTIVE,
   })
-  status: string;
+  status: CustomerStatus;
 
   @Column({
     name: 'segment',
     type: 'enum',
-    enum: ['premium', 'standard', 'basic', 'vip'],
-    default: 'standard'
+    enum: CustomerSegment,
+    default: CustomerSegment.STANDARD
   })
-  segment: string;
+  segment: CustomerSegment;
 
   @Column({
     name: 'total_spent',

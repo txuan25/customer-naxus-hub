@@ -388,15 +388,14 @@ async function seed() {
         }),
         inquiry_id: inquiry.id,
         responder_id: inquiry.assigned_to || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13',
-        approved_by_id: faker.helpers.maybe(() => 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', { probability: 0.5 })
       };
 
       await dataSource.query(
         `INSERT INTO responses (
           id, response_text, status, approval_notes, rejection_reason,
           sent_at, approved_at, rejected_at, metadata,
-          inquiry_id, responder_id, approved_by_id
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+          inquiry_id, responder_id
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
         [
           response.id,
           response.response_text,
@@ -408,8 +407,7 @@ async function seed() {
           response.rejected_at,
           response.metadata,
           response.inquiry_id,
-          response.responder_id,
-          response.approved_by_id
+          response.responder_id
         ]
       );
     }

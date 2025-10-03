@@ -40,32 +40,38 @@ export const InquiryList: React.FC = () => {
   ];
 
   // Dynamic filters based on toggle state and status selection
-  const getFilters = () => {
-    const filters = [];
+  const filters = React.useMemo(() => {
+    const filterList = [];
     
     if (isCso && showOnlyMyInquiries) {
-      filters.push({ field: "assignedToMe", value: "true", operator: "eq" as const });
+      filterList.push({ field: "assignedToMe", value: "true", operator: "eq" as const });
     }
 
     if (selectedStatuses.length > 0) {
-      filters.push({ field: "status", value: selectedStatuses, operator: "eq" as const });
+      filterList.push({ field: "status", value: selectedStatuses, operator: "eq" as const });
     }
     
-    return filters;
-  };
+    return filterList;
+  }, [isCso, showOnlyMyInquiries, selectedStatuses]);
 
-  const filters = getFilters();
-
-  // Debug: Log filters when they change
-  React.useEffect(() => {
-    console.log('Current filters:', filters);
-  }, [filters]);
+  const [current, setCurrent] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(10);
 
   const {
     query: { data: inquiryData, isLoading, refetch }
   } = useList({
     resource: 'inquiries',
     filters,
+    pagination: {
+      current,
+      pageSize,
+      mode: 'server',
+    } as any,
+    queryOptions: {
+      // Force re-fetch when filters or pagination change
+      refetchOnWindowFocus: false,
+      queryKey: ['inquiries', filters, current, pageSize],
+    },
   });
 
   const inquiries = (inquiryData?.data || []) as Inquiry[];
@@ -111,26 +117,13 @@ export const InquiryList: React.FC = () => {
             </Space>
           </Col>
           <Col>
-            <Space>
-              {isCso && (
-                <Space>
-                  <Typography.Text>My Inquiries Only</Typography.Text>
-                  <Switch
-                    checked={showOnlyMyInquiries}
-                    onChange={handleToggleChange}
-                    checkedChildren="ON"
-                    unCheckedChildren="OFF"
-                  />
-                </Space>
-              )}
-              <Button
-                icon={<ReloadOutlined />}
-                onClick={handleRefresh}
-                loading={isLoading}
-              >
-                Refresh
-              </Button>
-            </Space>
+            <Button
+              icon={<ReloadOutlined />}
+              onClick={handleRefresh}
+              loading={isLoading}
+            >
+              Refresh
+            </Button>
           </Col>
         </Row>
       </div>
@@ -143,6 +136,19 @@ export const InquiryList: React.FC = () => {
               <Typography.Text strong>Filters:</Typography.Text>
             </Space>
           </Col>
+          {isCso && (
+            <Col>
+              <Space align="center">
+                <Typography.Text>My Inquiries Only:</Typography.Text>
+                <Switch
+                  checked={showOnlyMyInquiries}
+                  onChange={handleToggleChange}
+                  checkedChildren="YES"
+                  unCheckedChildren="NO"
+                />
+              </Space>
+            </Col>
+          )}
           <Col>
             <Space align="center">
               <Typography.Text>Status:</Typography.Text>
@@ -184,11 +190,15 @@ export const InquiryList: React.FC = () => {
           inquiries={inquiries}
           loading={isLoading}
           pagination={{
-            current: 1,
-            pageSize: 25,
+            current,
+            pageSize,
             total: total,
             showSizeChanger: true,
             pageSizeOptions: ['10', '25', '50', '100'],
+            onChange: (page, size) => {
+              setCurrent(page);
+              if (size) setPageSize(size);
+            },
           }}
         />
       </Card>

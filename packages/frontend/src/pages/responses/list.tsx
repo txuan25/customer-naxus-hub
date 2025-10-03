@@ -28,6 +28,8 @@ const { Title } = Typography;
 export const ResponseList: React.FC = () => {
   const { data: identity } = useGetIdentity<User>();
   const [showPendingOnly, setShowPendingOnly] = useState(false);
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
 
   // Prepare filters for API-based filtering
   const filters: CrudFilter[] = showPendingOnly
@@ -39,9 +41,19 @@ export const ResponseList: React.FC = () => {
   } = useList({
     resource: 'responses',
     filters,
+    pagination: {
+      current,
+      pageSize,
+      mode: 'server',
+    } as any,
     meta: {
       populate: ['inquiry', 'responder', 'approvedBy']
-    }
+    },
+    queryOptions: {
+      // Force re-fetch when filters or pagination change
+      refetchOnWindowFocus: false,
+      queryKey: ['responses', filters, current, pageSize],
+    },
   });
 
   const responses = (responseData?.data || []) as Response[];
@@ -152,11 +164,15 @@ export const ResponseList: React.FC = () => {
           responses={responses}
           loading={isLoading}
           pagination={{
-            current: 1,
-            pageSize: 25,
+            current,
+            pageSize,
             total,
             showSizeChanger: true,
             pageSizeOptions: ['10', '25', '50', '100'],
+            onChange: (page, size) => {
+              setCurrent(page);
+              if (size) setPageSize(size);
+            },
           }}
           onApprove={handleApprove}
           onReject={handleReject}

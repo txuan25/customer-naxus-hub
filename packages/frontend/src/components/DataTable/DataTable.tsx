@@ -36,7 +36,7 @@ export const DataTable = <T extends Record<string, any>>({
   columns,
   data,
   loading = false,
-  searchable = true,
+  searchable = false,  // Default to false to hide local search
   filterable = false,
   searchPlaceholder = "Search...",
   filterOptions = [
@@ -51,7 +51,7 @@ export const DataTable = <T extends Record<string, any>>({
   tableClassName,
   controlsClassName,
   emptyText,
-  showControls = true,
+  showControls = false,  // Default to false to hide local controls
   ...props
 }: DataTableProps<T>) => {
   const [searchValue, setSearchValue] = React.useState('');

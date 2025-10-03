@@ -150,7 +150,6 @@ export const ResponseTable: React.FC<ResponseTableProps> = ({
           )}
         </Space>
       ),
-      sorter: (a, b) => getCustomerName(a).localeCompare(getCustomerName(b)),
     },
     {
       title: 'CSO',
@@ -163,9 +162,6 @@ export const ResponseTable: React.FC<ResponseTableProps> = ({
           </Text>
         </Space>
       ),
-      sorter: (a, b) =>
-        `${a.responder.firstName} ${a.responder.lastName}`
-          .localeCompare(`${b.responder.firstName} ${b.responder.lastName}`),
     },
     {
       title: 'Response Preview',
@@ -199,11 +195,6 @@ export const ResponseTable: React.FC<ResponseTableProps> = ({
       render: (status: ResponseStatus) => (
         <StatusBadge status={status} />
       ),
-      filters: Object.values(ResponseStatus).map(status => ({
-        text: status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-        value: status,
-      })),
-      onFilter: (value, record) => record.status === value,
     },
     {
       title: 'Created',
@@ -214,8 +205,6 @@ export const ResponseTable: React.FC<ResponseTableProps> = ({
           <Text>{formatDate(date)}</Text>
         </Tooltip>
       ),
-      sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      defaultSortOrder: 'descend',
     },
     {
       title: 'Actions',
@@ -279,7 +268,7 @@ export const ResponseTable: React.FC<ResponseTableProps> = ({
         data={responses}
         loading={loading}
         pagination={pagination}
-        searchable={true}
+        searchable={false}
         onSearch={onSearch}
       />
 
