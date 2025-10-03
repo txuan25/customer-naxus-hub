@@ -10,7 +10,7 @@ A production-ready CRM platform built with TypeScript, NestJS, PostgreSQL, and R
 - pnpm 8+
 
 ```bash
-git clone <repository-url>
+git clone git@github.com:txuan25/customer-naxus-hub.git
 cd customer-nexus-hub
 ```
 
