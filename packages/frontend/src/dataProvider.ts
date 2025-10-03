@@ -38,7 +38,15 @@ export const dataProvider: DataProvider = {
     if (filters) {
       filters.forEach((filter) => {
         if (filter.operator === "eq" && filter.value) {
-          params.append(filter.field, filter.value);
+          if (filter.field === "assignedToMe") {
+            params.append("assignedToMe", filter.value);
+          } else if (filter.field === "status" && Array.isArray(filter.value)) {
+            // Handle multiple status values
+            const statusValues = filter.value.join(",");
+            params.append("status", statusValues);
+          } else {
+            params.append(filter.field, filter.value);
+          }
         }
       });
     }

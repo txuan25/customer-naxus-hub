@@ -52,7 +52,7 @@ export class InquiriesController {
   @ApiQuery({ name: 'assignedTo', required: false })
   findAll(
     @Query() paginationDto: PaginationDto,
-    @Query('status') status?: InquiryStatus,
+    @Query('status') status?: InquiryStatus | InquiryStatus[],
     @Query('priority') priority?: InquiryPriority,
     @Query('category') category?: InquiryCategory,
     @Query('customerId') customerId?: string,
@@ -64,15 +64,39 @@ export class InquiriesController {
       userKeys: user ? Object.keys(user) : null,
       userId: user?.id,
       userRole: user?.role,
+      assignedToMe: paginationDto.assignedToMe,
+      status: status,
+      statusType: Array.isArray(status) ? 'array' : typeof status,
     });
-    
-    return this.inquiriesService.findAll(paginationDto, {
-      status,
+
+    // Handle multiple status values from query params like ?status=pending&status=in_progress
+    let processedStatus = status;
+    if (typeof status === 'string' && status.includes(',')) {
+      // Handle comma-separated values like ?status=pending,in_progress
+      processedStatus = status.split(',').map(s => s.trim()) as InquiryStatus[];
+    }
+
+    const filters = {
+      status: processedStatus,
       priority,
       category,
       customerId,
       assignedTo,
-    }, user);
+      assignedToMe: paginationDto.assignedToMe,
+    };
+
+    // Remove undefined values from filters
+    Object.keys(filters).forEach(key => {
+      if (filters[key] === undefined) {
+        delete filters[key];
+      }
+    });
+    
+    return this.inquiriesService.findAll(
+      paginationDto,
+      Object.keys(filters).length > 0 ? filters : undefined,
+      user
+    );
   }
 
   @Get('statistics')

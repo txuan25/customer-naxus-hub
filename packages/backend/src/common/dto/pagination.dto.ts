@@ -1,6 +1,6 @@
-import { IsOptional, IsPositive, IsString, Min } from 'class-validator';
+import { IsOptional, IsPositive, IsString, Min, IsBoolean } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 
 export class PaginationDto {
   @ApiPropertyOptional({ default: 1, description: 'Page number' })
@@ -26,4 +26,10 @@ export class PaginationDto {
   @IsOptional()
   @IsString()
   sortOrder?: 'ASC' | 'DESC';
+
+  @ApiPropertyOptional({ description: 'Filter to show only assigned items (for CSO role)' })
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  assignedToMe?: boolean;
 }

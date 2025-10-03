@@ -23,11 +23,12 @@ export class InquiriesService {
   async findAll(
     paginationDto: PaginationDto,
     filters?: {
-      status?: InquiryStatus;
+      status?: InquiryStatus | InquiryStatus[];
       priority?: InquiryPriority;
       category?: InquiryCategory;
       customerId?: string;
       assignedTo?: string;
+      assignedToMe?: boolean;
     },
     currentUser?: { userId: string; role: UserRole },
   ) {
@@ -45,10 +46,11 @@ export class InquiriesService {
     query.leftJoinAndSelect('inquiry.responses', 'responses');
     query.leftJoinAndSelect('inquiry.assignee', 'assignee');
 
-    // Filter inquiries for CSO role - only show assigned inquiries
-    if (currentUser && currentUser.role === UserRole.CSO) {
+    // Filter inquiries for CSO role - conditionally show assigned inquiries
+    if (currentUser && currentUser.role === UserRole.CSO && filters?.assignedToMe === true) {
       query.andWhere('inquiry.assignedTo = :userId', { userId: currentUser.userId });
     }
+    // Note: When assignedToMe is false or undefined, CSOs can see all inquiries
 
     if (filters?.status) {
       query.andWhere('inquiry.status = :status', { status: filters.status });
