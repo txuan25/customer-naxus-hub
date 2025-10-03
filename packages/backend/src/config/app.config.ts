@@ -6,7 +6,9 @@ export default registerAs('app', () => ({
   name: process.env.APP_NAME || 'Customer Nexus Hub',
   version: process.env.APP_VERSION || '1.0.0',
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    origin: process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+      : ['http://localhost:5173'],
   },
   rateLimit: {
     ttl: parseInt(process.env.RATE_LIMIT_TTL || '60', 10),

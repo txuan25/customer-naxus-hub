@@ -8,7 +8,7 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { Customer } from './customer.entity';
+import { Customer } from '../database/entities/customer.entity';
 import { User } from './user.entity';
 
 export enum InquiryStatus {

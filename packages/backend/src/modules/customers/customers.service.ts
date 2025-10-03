@@ -21,10 +21,11 @@ export interface CreateCustomerDto {
 export interface UpdateCustomerDto extends Partial<CreateCustomerDto> {}
 
 export interface CustomerListResponse {
-  data: Customer[];
+  items: Customer[];
   total: number;
   page: number;
   limit: number;
+  totalPages: number;
 }
 
 @Injectable()
@@ -37,8 +38,6 @@ export class CustomersService {
   async create(createCustomerDto: CreateCustomerDto, user: User): Promise<Customer> {
     const customer = this.customerRepository.create({
       ...createCustomerDto,
-      createdBy: user,
-      assignedTo: user.role === UserRole.CSO ? user : undefined,
     });
 
     return this.customerRepository.save(customer);
@@ -49,15 +48,9 @@ export class CustomersService {
     limit: number = 10,
     user: User,
   ): Promise<CustomerListResponse> {
-    const query = this.customerRepository.createQueryBuilder('customer')
-      .leftJoinAndSelect('customer.createdBy', 'createdBy')
-      .leftJoinAndSelect('customer.assignedTo', 'assignedTo');
+    const query = this.customerRepository.createQueryBuilder('customer');
 
-    // CSO can only see customers assigned to them
-    if (user.role === UserRole.CSO) {
-      query.where('customer.assignedToId = :userId', { userId: user.id });
-    }
-
+    // All users can see all customers for now (no assignment logic)
     const [data, total] = await query
       .skip((page - 1) * limit)
       .take(limit)
@@ -65,26 +58,19 @@ export class CustomersService {
       .getManyAndCount();
 
     return {
-      data,
+      items: data,
       total,
       page,
       limit,
+      totalPages: Math.ceil(total / limit),
     };
   }
 
   async findOne(id: string, user: User): Promise<Customer> {
-    const query = this.customerRepository.createQueryBuilder('customer')
-      .leftJoinAndSelect('customer.createdBy', 'createdBy')
-      .leftJoinAndSelect('customer.assignedTo', 'assignedTo')
-      .leftJoinAndSelect('customer.inquiries', 'inquiries')
-      .where('customer.id = :id', { id });
-
-    // CSO can only see customers assigned to them
-    if (user.role === UserRole.CSO) {
-      query.andWhere('customer.assignedToId = :userId', { userId: user.id });
-    }
-
-    const customer = await query.getOne();
+    const customer = await this.customerRepository.findOne({
+      where: { id },
+      relations: ['inquiries'],
+    });
 
     if (!customer) {
       throw new NotFoundException(`Customer with ID ${id} not found`);
@@ -99,11 +85,6 @@ export class CustomersService {
     user: User,
   ): Promise<Customer> {
     const customer = await this.findOne(id, user);
-
-    // CSO can only update customers assigned to them
-    if (user.role === UserRole.CSO && customer.assignedTo?.id !== user.id) {
-      throw new ForbiddenException('You can only update customers assigned to you');
-    }
 
     Object.assign(customer, updateCustomerDto);
     return this.customerRepository.save(customer);
@@ -120,15 +101,8 @@ export class CustomersService {
   }
 
   async assignToUser(customerId: string, userId: string, user: User): Promise<Customer> {
-    // Only Admin and Manager can assign customers
-    if (user.role === UserRole.CSO) {
-      throw new ForbiddenException('You do not have permission to assign customers');
-    }
-
-    const customer = await this.findOne(customerId, user);
-    customer.assignedTo = { id: userId } as User;
-    
-    return this.customerRepository.save(customer);
+    // Assignment functionality temporarily disabled since assignedTo relation was removed
+    throw new ForbiddenException('Customer assignment feature is temporarily unavailable');
   }
 
   async searchCustomers(
@@ -138,17 +112,10 @@ export class CustomersService {
     limit: number = 10,
   ): Promise<CustomerListResponse> {
     const query = this.customerRepository.createQueryBuilder('customer')
-      .leftJoinAndSelect('customer.createdBy', 'createdBy')
-      .leftJoinAndSelect('customer.assignedTo', 'assignedTo')
       .where(
         '(customer.firstName ILIKE :search OR customer.lastName ILIKE :search OR customer.email ILIKE :search OR customer.company ILIKE :search)',
         { search: `%${searchTerm}%` },
       );
-
-    // CSO can only search their assigned customers
-    if (user.role === UserRole.CSO) {
-      query.andWhere('customer.assignedToId = :userId', { userId: user.id });
-    }
 
     const [data, total] = await query
       .skip((page - 1) * limit)
@@ -157,10 +124,11 @@ export class CustomersService {
       .getManyAndCount();
 
     return {
-      data,
+      items: data,
       total,
       page,
       limit,
+      totalPages: Math.ceil(total / limit),
     };
   }
 }

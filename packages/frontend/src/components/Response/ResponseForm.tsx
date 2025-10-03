@@ -31,18 +31,16 @@ export const ResponseForm: React.FC<ResponseFormProps> = ({
 
   const handleSubmit = (values: any) => {
     const responseData: CreateResponseDto = {
-      message: values.message,
-      internalNotes: values.internalNotes,
+      responseText: values.responseText,
       inquiryId: inquiry?.id || values.inquiryId
     };
     onSubmit(responseData);
   };
 
   const handleSaveDraft = () => {
-    form.validateFields(['message']).then((values) => {
+    form.validateFields(['responseText']).then((values) => {
       const responseData: CreateResponseDto = {
-        message: values.message,
-        internalNotes: values.internalNotes,
+        responseText: values.responseText,
         inquiryId: inquiry?.id || values.inquiryId
       };
       onSaveDraft(responseData);

@@ -58,8 +58,8 @@ export const dataProvider: DataProvider = {
     const data = await handleResponse(response);
 
     return {
-      data: data.data || data,
-      total: data.total || data.length || 0,
+      data: data.items || [],
+      total: data.total || 0,
     };
   },
 

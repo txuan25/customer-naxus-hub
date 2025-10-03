@@ -1,8 +1,8 @@
 // User roles enum
 export enum UserRole {
-  ADMIN = 'ADMIN',
-  MANAGER = 'MANAGER',
-  CSO = 'CSO'
+  ADMIN = 'admin',
+  MANAGER = 'manager',
+  CSO = 'cso'
 }
 
 // User interface
@@ -97,7 +97,7 @@ export enum ResponseStatus {
 export interface Inquiry {
   id: string;
   subject: string;
-  description: string;
+  message: string;
   priority: InquiryPriority;
   status: InquiryStatus;
   category: InquiryCategory;
@@ -113,6 +113,7 @@ export interface Inquiry {
 export interface InquiryReference {
   id: string;
   subject: string;
+  category?: InquiryCategory;
   customer?: {
     id: string;
     firstName: string;
@@ -124,34 +125,27 @@ export interface InquiryReference {
 // Response interface
 export interface Response {
   id: string;
-  message: string;
-  internalNotes?: string;
+  responseText: string;
   status: ResponseStatus;
   inquiryId: string;
   inquiry?: InquiryReference;
-  createdBy: User;
+  responder: User;
+  responderId: string;
   approvedBy?: User;
-  rejectedBy?: User;
+  approvedById?: string;
   approvalNotes?: string;
   rejectionReason?: string;
-  subject?: string;
-  attachments?: Array<{
-    filename: string;
-    url: string;
-    size: number;
-    mimeType: string;
-  }>;
-  emailSent?: boolean;
-  emailSentAt?: string;
+  metadata?: Record<string, any>;
+  sentAt?: string;
+  approvedAt?: string;
+  rejectedAt?: string;
   createdAt: string;
   updatedAt: string;
-  sentAt?: string;
 }
 
 // Create DTOs
 export interface CreateResponseDto {
-  message: string;
-  internalNotes?: string;
+  responseText: string;
   inquiryId: string;
 }
 

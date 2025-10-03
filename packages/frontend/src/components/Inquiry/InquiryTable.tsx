@@ -72,14 +72,17 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
   const { data: identity } = identityHook;
 
   const canCreateResponse = (inquiry: Inquiry): boolean => {
-    if (!identity) return false;
-    // CSO can create responses for assigned inquiries, Manager can create for all
-    if (identity.role === UserRole.CSO) {
-      return inquiry.assignedTo?.id === identity.id && 
-             [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+    if (!identity) {
+      return false;
     }
-    return identity.role === UserRole.MANAGER && 
-           [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+    
+    // CSO can only reply to OPEN and IN_PROGRESS inquiries
+    if (identity.role === UserRole.CSO) {
+      return [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+    }
+    
+    // Manager can create responses for all inquiry statuses
+    return identity.role === UserRole.MANAGER;
   };
 
   const formatDate = (dateString: string): string => {
@@ -163,28 +166,6 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
       onFilter: (value, record) => record.status === value,
     },
     {
-      title: 'Assigned To',
-      key: 'assignedTo',
-      render: (_, inquiry) => (
-        inquiry.assignedTo ? (
-          <Space>
-            <Text>{inquiry.assignedTo.firstName} {inquiry.assignedTo.lastName}</Text>
-          </Space>
-        ) : (
-          <Text type="secondary">Unassigned</Text>
-        )
-      ),
-      filters: identity?.role === UserRole.MANAGER ? [
-        { text: 'Assigned', value: 'assigned' },
-        { text: 'Unassigned', value: 'unassigned' },
-      ] : undefined,
-      onFilter: (value, record) => {
-        if (value === 'assigned') return !!record.assignedTo;
-        if (value === 'unassigned') return !record.assignedTo;
-        return true;
-      },
-    },
-    {
       title: 'Date',
       dataIndex: 'createdAt',
       key: 'createdAt',
@@ -194,7 +175,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
         </Tooltip>
       ),
       sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      defaultSortOrder: 'descend',
+      defaultSortOrder: undefined, // Remove default sort to enable smart sorting
     },
     {
       title: 'Actions',

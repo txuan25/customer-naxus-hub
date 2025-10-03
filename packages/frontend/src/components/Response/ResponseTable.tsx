@@ -81,7 +81,7 @@ export const ResponseTable: React.FC<ResponseTableProps> = ({
     if (!identity) return false;
     // CSO can edit their own draft responses
     if (identity.role === UserRole.CSO) {
-      return response.createdBy.id === identity.id && 
+      return response.responder.id === identity.id &&
              response.status === ResponseStatus.DRAFT;
     }
     return false;
@@ -157,15 +157,15 @@ export const ResponseTable: React.FC<ResponseTableProps> = ({
       key: 'createdBy',
       render: (_, response) => (
         <Space direction="vertical" size={0}>
-          <Text>{response.createdBy.firstName} {response.createdBy.lastName}</Text>
+          <Text>{response.responder.firstName} {response.responder.lastName}</Text>
           <Text type="secondary" style={{ fontSize: '12px' }}>
-            {response.createdBy.email}
+            {response.responder.email}
           </Text>
         </Space>
       ),
-      sorter: (a, b) => 
-        `${a.createdBy.firstName} ${a.createdBy.lastName}`
-          .localeCompare(`${b.createdBy.firstName} ${b.createdBy.lastName}`),
+      sorter: (a, b) =>
+        `${a.responder.firstName} ${a.responder.lastName}`
+          .localeCompare(`${b.responder.firstName} ${b.responder.lastName}`),
     },
     {
       title: 'Response Preview',
@@ -187,23 +187,8 @@ export const ResponseTable: React.FC<ResponseTableProps> = ({
               wordBreak: 'break-word'
             }}
           >
-            {response.message}
+            {response.responseText}
           </Paragraph>
-          {response.internalNotes && (
-            <Paragraph
-              type="secondary"
-              style={{ fontSize: '12px', marginBottom: 0 }}
-              ellipsis={{
-                rows: 2,
-                expandable: true,
-                symbol: 'more',
-                onExpand: (event) => event.stopPropagation()
-              }}
-            >
-              <Text strong>Internal: </Text>
-              {response.internalNotes}
-            </Paragraph>
-          )}
         </div>
       ),
     },
@@ -317,32 +302,19 @@ export const ResponseTable: React.FC<ResponseTableProps> = ({
             </div>
             <div>
               <Text strong>CSO: </Text>
-              <Text>{selectedResponse.createdBy.firstName} {selectedResponse.createdBy.lastName}</Text>
+              <Text>{selectedResponse.responder.firstName} {selectedResponse.responder.lastName}</Text>
             </div>
             <div>
               <Text strong>Response Message:</Text>
-              <div style={{ 
-                backgroundColor: '#f5f5f5', 
-                padding: 12, 
+              <div style={{
+                backgroundColor: '#f5f5f5',
+                padding: 12,
                 borderRadius: 6,
                 marginTop: 8
               }}>
-                <Text>{selectedResponse.message}</Text>
+                <Text>{selectedResponse.responseText}</Text>
               </div>
             </div>
-            {selectedResponse.internalNotes && (
-              <div>
-                <Text strong>Internal Notes:</Text>
-                <div style={{ 
-                  backgroundColor: '#f5f5f5', 
-                  padding: 12, 
-                  borderRadius: 6,
-                  marginTop: 8
-                }}>
-                  <Text>{selectedResponse.internalNotes}</Text>
-                </div>
-              </div>
-            )}
             <div>
               <Text strong>
                 {modalType === 'approve' ? 'Approval' : 'Rejection'} Notes (Optional):

@@ -55,12 +55,6 @@ export class User {
   updatedAt: Date;
 
   // Relations
-  @OneToMany(() => Customer, (customer) => customer.createdBy)
-  customersCreated: Customer[];
-
-  @OneToMany(() => Customer, (customer) => customer.assignedTo)
-  customersAssigned: Customer[];
-
   @OneToMany(() => Response, (response) => response.respondedBy)
   responses: Response[];
 
