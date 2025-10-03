@@ -88,7 +88,7 @@ export const dataProvider: DataProvider = {
   // Update an existing resource
   update: async ({ resource, id, variables, meta }) => {
     const response = await fetch(`${API_BASE_URL}/${resource}/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: getAuthHeaders(),
       body: JSON.stringify(variables),
     });
@@ -124,7 +124,7 @@ export const dataProvider: DataProvider = {
   updateMany: async ({ resource, ids, variables, meta }) => {
     const promises = ids.map((id) =>
       fetch(`${API_BASE_URL}/${resource}/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify(variables),
       }).then(handleResponse)
@@ -172,6 +172,41 @@ export const dataProvider: DataProvider = {
     const response = await fetch(requestUrl, config);
     const data = await handleResponse(response);
 
+    return { data };
+  },
+};
+
+// Extended response actions following backend API structure
+export const responseActions = {
+  submitForApproval: async (id: string) => {
+    const response = await fetch(`${API_BASE_URL}/responses/${id}/submit`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+    });
+
+    const data = await handleResponse(response);
+    return { data };
+  },
+
+  approve: async (id: string, approvalNotes?: string) => {
+    const response = await fetch(`${API_BASE_URL}/responses/${id}/approve`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ approvalNotes }),
+    });
+
+    const data = await handleResponse(response);
+    return { data };
+  },
+
+  reject: async (id: string, rejectionReason: string) => {
+    const response = await fetch(`${API_BASE_URL}/responses/${id}/reject`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ rejectionReason }),
+    });
+
+    const data = await handleResponse(response);
     return { data };
   },
 };

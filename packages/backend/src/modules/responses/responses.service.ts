@@ -190,9 +190,6 @@ export class ResponsesService {
     response.rejectedAt = new Date();
     response.rejectionReason = rejectDto.rejectionReason;
 
-    // Response goes back to draft for revision
-    response.status = ResponseStatus.DRAFT;
-
     return this.responseRepository.save(response);
   }
 

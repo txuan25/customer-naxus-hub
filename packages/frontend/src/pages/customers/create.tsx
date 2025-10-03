@@ -47,7 +47,7 @@ export const CustomerCreate: React.FC = () => {
         <div style={{ textAlign: 'center', padding: '40px' }}>
           <Title level={4}>Customer Create Form</Title>
           <Typography.Text type="secondary">
-            CustomerForm component has been removed. This is a placeholder for the customer creation interface.
+            Not implemented yet // TODO
           </Typography.Text>
         </div>
       </Card>

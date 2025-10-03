@@ -95,7 +95,7 @@ export const ResponseForm: React.FC<ResponseFormProps> = ({
           onFinish={handleSubmit}
         >
           <Form.Item
-            name="message"
+            name="responseText"
             label="Response Message"
             rules={[
               { required: true, message: 'Please enter your response message' },
@@ -110,20 +110,6 @@ export const ResponseForm: React.FC<ResponseFormProps> = ({
             />
           </Form.Item>
 
-          <Divider />
-
-          <Form.Item
-            name="internalNotes"
-            label="Internal Notes (Optional)"
-            help="These notes are only visible to CSOs and Managers"
-          >
-            <TextArea
-              rows={4}
-              placeholder="Add any internal notes or context..."
-              showCount
-              maxLength={500}
-            />
-          </Form.Item>
 
           <Form.Item style={{ marginBottom: 0 }}>
             <Space>

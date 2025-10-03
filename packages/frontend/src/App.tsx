@@ -15,6 +15,12 @@ import {
 import "@refinedev/antd/dist/reset.css";
 
 import { App as AntdApp } from "antd";
+import {
+  TeamOutlined,
+  CustomerServiceOutlined,
+  SendOutlined,
+  AppstoreOutlined
+} from "@ant-design/icons";
 import { BrowserRouter, Route, Routes, Outlet } from "react-router";
 import routerProvider, {
   NavigateToResource,
@@ -57,6 +63,7 @@ import { InquiryShow } from './pages/inquiries/show';
 // Response Management Components
 import { ResponseList } from './pages/responses/list';
 import { ResponseCreate } from './pages/responses/create';
+import { ResponseEdit } from './pages/responses/edit';
 import { ResponseShow } from './pages/responses/show';
 
 function App() {
@@ -80,6 +87,8 @@ function App() {
                     show: "/customers/show/:id",
                     meta: {
                       canDelete: true,
+                      label: "Customers",
+                      icon: <TeamOutlined />,
                     },
                   },
                   {
@@ -88,15 +97,18 @@ function App() {
                     show: "/inquiries/show/:id",
                     meta: {
                       label: "Inquiries",
+                      icon: <CustomerServiceOutlined />,
                     },
                   },
                   {
                     name: "responses",
                     list: "/responses",
                     create: "/responses/create",
+                    edit: "/responses/edit/:id",
                     show: "/responses/show/:id",
                     meta: {
                       label: "Responses",
+                      icon: <SendOutlined />,
                     },
                   },
                 ]}
@@ -104,6 +116,7 @@ function App() {
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
                   projectId: "i4hdjU-H2qu9w-I3pDdz",
+                  title: { text: "Nexus Hub", icon: <AppstoreOutlined /> },
                 }}
               >
                 <Routes>
@@ -140,6 +153,7 @@ function App() {
                     {/* Response Management Routes */}
                     <Route path="/responses" element={<ResponseList />} />
                     <Route path="/responses/create" element={<ResponseCreate />} />
+                    <Route path="/responses/edit/:id" element={<ResponseEdit />} />
                     <Route path="/responses/show/:id" element={<ResponseShow />} />
                   </Route>
 

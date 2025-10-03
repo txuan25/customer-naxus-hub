@@ -43,6 +43,7 @@ export class InquiriesService {
     const query = this.inquiryRepository.createQueryBuilder('inquiry');
     query.leftJoinAndSelect('inquiry.customer', 'customer');
     query.leftJoinAndSelect('inquiry.responses', 'responses');
+    query.leftJoinAndSelect('inquiry.assignee', 'assignee');
 
     // Filter inquiries for CSO role - only show assigned inquiries
     if (currentUser && currentUser.role === UserRole.CSO) {
@@ -140,7 +141,7 @@ export class InquiriesService {
   async findOne(id: string): Promise<Inquiry> {
     const inquiry = await this.inquiryRepository.findOne({
       where: { id },
-      relations: ['customer', 'responses', 'responses.responder'],
+      relations: ['customer', 'responses', 'responses.responder', 'assignee'],
     });
 
     if (!inquiry) {

@@ -17,11 +17,11 @@ import {
 import {
   useList,
   useGetIdentity,
-  useUpdate,
   CrudFilter
 } from '@refinedev/core';
 import { ResponseTable } from '../../components/Response/ResponseTable';
 import { Response, User, UserRole, ResponseStatus } from '../../types';
+import { responseActions } from '../../dataProvider';
 
 const { Title } = Typography;
 
@@ -47,8 +47,6 @@ export const ResponseList: React.FC = () => {
   const responses = (responseData?.data || []) as Response[];
   const total = responseData?.total || 0;
 
-  const { mutate: updateResponse } = useUpdate();
-
   const handleRefresh = () => {
     refetch();
   };
@@ -59,22 +57,9 @@ export const ResponseList: React.FC = () => {
 
   const handleApprove = async (id: string, notes?: string) => {
     try {
-      await updateResponse({
-        resource: 'responses',
-        id,
-        values: {
-          status: ResponseStatus.APPROVED,
-          approvalNotes: notes,
-        },
-        successNotification: {
-          message: 'Response approved successfully',
-          type: 'success',
-        },
-        errorNotification: {
-          message: 'Failed to approve response',
-          type: 'error',
-        },
-      });
+      await responseActions.approve(id, notes);
+      message.success('Response approved successfully');
+      refetch(); // Refresh the list to show updated status
     } catch (error) {
       message.error('Failed to approve response');
     }
@@ -82,22 +67,9 @@ export const ResponseList: React.FC = () => {
 
   const handleReject = async (id: string, reason?: string) => {
     try {
-      await updateResponse({
-        resource: 'responses',
-        id,
-        values: {
-          status: ResponseStatus.REJECTED,
-          rejectionReason: reason,
-        },
-        successNotification: {
-          message: 'Response rejected',
-          type: 'success',
-        },
-        errorNotification: {
-          message: 'Failed to reject response',
-          type: 'error',
-        },
-      });
+      await responseActions.reject(id, reason || 'No reason provided');
+      message.success('Response rejected');
+      refetch(); // Refresh the list to show updated status
     } catch (error) {
       message.error('Failed to reject response');
     }
