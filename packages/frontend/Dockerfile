@@ -1,37 +1,29 @@
-# This Dockerfile uses `serve` npm package to serve the static files with node process.
-# You can find the Dockerfile for nginx in the following link:
-# https://github.com/refinedev/dockerfiles/blob/main/vite/Dockerfile.nginx
-FROM refinedev/node:18 AS base
+FROM node:18-alpine
 
-FROM base as deps
+WORKDIR /app
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+# Install pnpm
+RUN npm install -g pnpm
 
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# Copy root package files for monorepo
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/frontend/package.json ./packages/frontend/
 
-FROM base as builder
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
-ENV NODE_ENV production
+# Copy frontend source
+COPY packages/frontend ./packages/frontend
 
-COPY --from=deps /app/refine/node_modules ./node_modules
+# Build the application
+WORKDIR /app/packages/frontend
+RUN pnpm build
 
-COPY . .
-
-RUN npm run build
-
-FROM base as runner
-
-ENV NODE_ENV production
-
+# Install serve to serve static files
 RUN npm install -g serve
 
-COPY --from=builder /app/refine/dist ./
+# Expose port
+EXPOSE 3000
 
-USER refine
-
-CMD ["serve"]
+# Serve the built application
+CMD ["serve", "-s", "dist", "-l", "3000"]
