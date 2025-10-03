@@ -29,7 +29,7 @@ export class InquiriesService {
       customerId?: string;
       assignedTo?: string;
     },
-    currentUser?: { id: string; role: UserRole },
+    currentUser?: { userId: string; role: UserRole },
   ) {
     const { page = 1, limit = 10, sortBy, sortOrder = 'DESC' } = paginationDto;
     
@@ -43,6 +43,11 @@ export class InquiriesService {
     const query = this.inquiryRepository.createQueryBuilder('inquiry');
     query.leftJoinAndSelect('inquiry.customer', 'customer');
     query.leftJoinAndSelect('inquiry.responses', 'responses');
+
+    // Filter inquiries for CSO role - only show assigned inquiries
+    if (currentUser && currentUser.role === UserRole.CSO) {
+      query.andWhere('inquiry.assignedTo = :userId', { userId: currentUser.userId });
+    }
 
     if (filters?.status) {
       query.andWhere('inquiry.status = :status', { status: filters.status });
@@ -87,7 +92,7 @@ export class InquiriesService {
     };
   }
 
-  private applySmartSorting(query: any, currentUser?: { id: string; role: UserRole }) {
+  private applySmartSorting(query: any, currentUser?: { userId: string; role: UserRole }) {
     if (!currentUser) {
       // Fallback: just sort by creation date if no user context
       query.orderBy('inquiry.createdAt', 'DESC');
@@ -156,7 +161,7 @@ export class InquiriesService {
     if (
       currentUser.role !== UserRole.ADMIN &&
       currentUser.role !== UserRole.MANAGER &&
-      (currentUser.role === UserRole.CSO && inquiry.assignedTo !== currentUser.id)
+      (currentUser.role === UserRole.CSO && inquiry.assignedTo !== currentUser.userId)  // Fix: use userId instead of id
     ) {
       throw new ForbiddenException('You do not have permission to update this inquiry');
     }

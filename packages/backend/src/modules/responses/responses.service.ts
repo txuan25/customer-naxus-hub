@@ -26,7 +26,7 @@ export class ResponsesService {
     // Check if user is authorized (CSO assigned to inquiry or Manager/Admin)
     if (
       currentUser.role === UserRole.CSO &&
-      inquiry.assignedTo !== currentUser.id
+      inquiry.assignedTo !== currentUser.userId  // Fix: use userId instead of id
     ) {
       throw new ForbiddenException('You are not assigned to this inquiry');
     }
@@ -111,7 +111,7 @@ export class ResponsesService {
 
     // Check authorization
     if (
-      response.responderId !== currentUser.id &&
+      response.responderId !== currentUser.userId &&  // Fix: use userId instead of id
       currentUser.role !== UserRole.ADMIN &&
       currentUser.role !== UserRole.MANAGER
     ) {
@@ -132,7 +132,7 @@ export class ResponsesService {
 
     // Check authorization
     if (
-      response.responderId !== currentUser.id &&
+      response.responderId !== currentUser.userId &&  // Fix: use userId instead of id
       currentUser.role !== UserRole.ADMIN
     ) {
       throw new ForbiddenException('You do not have permission to submit this response');
