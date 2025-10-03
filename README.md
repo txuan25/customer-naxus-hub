@@ -9,24 +9,25 @@ A production-ready CRM platform built with TypeScript, NestJS, PostgreSQL, and R
 - Node.js 18+
 - pnpm 8+
 
+```bash
 git clone <repository-url>
 cd customer-nexus-hub
-docker compose up -d
-### Local Build & Run
-
-After cloning the project, simply run the following command in the root directory:
-
-```bash
-pnpm setup && pnpm quick-start
 ```
 
-This command will automatically:
-- Install dependencies
-- Start Docker services (PostgreSQL, Redis)
-- Run migrations and seed the database
-- Start the backend in development mode
+### Local Development
 
-After setup, you can access the backend API at `http://localhost:3000`.
+1. Ensure Node.js 18+ is active and install pnpm 8+ (for example, run `corepack enable pnpm`).
+2. For the first setup, execute `pnpm run setup` to install dependencies, run migrations, and seed sample data.
+3. Start the backend API in one terminal: `pnpm dev:backend`.
+4. Start the frontend in another terminal: `pnpm dev:frontend`.
+
+```bash
+pnpm run setup
+pnpm dev:backend
+pnpm dev:frontend
+```
+
+The backend is served at `http://localhost:3000`, and the frontend runs at `http://localhost:5173` by default.
 
 To test the API, run:
 ```bash
@@ -38,8 +39,9 @@ To test the API, run:
 | Role | Email | Password |
 |------|-------|----------|
 | Admin | admin@example.com | password123 |
-| Manager | manager@example.com | password123 |
-| CSO | cso@example.com | password123 |
+| Manager | manager@crm.com | password123 |
+| CSO | cso1@crm.com | password123 |
+| CSO | cso2@crm.com | password123 |
 
 ## 📁 Project Structure
 

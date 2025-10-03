@@ -18,13 +18,13 @@
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
     "format": "pnpm -r format",
-    "seed": "cd packages/backend && pnpm run seed:full",
+    "seed": "cd packages/backend && pnpm run seed",
     "migration:run": "cd packages/backend && pnpm run migration:run",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:restart": "docker compose restart",
     "setup": "pnpm install && pnpm run docker:up && sleep 5 && pnpm run migration:run && pnpm run seed",
-    "quick-start": "pnpm run docker:up && pnpm run dev:backend"
+    "quick-start": "pnpm run docker:up && pnpm run dev:backend && pnpm run dev:frontend"
   },
   "devDependencies": {
     "@types/node": "^20.3.1",

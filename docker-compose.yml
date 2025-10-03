@@ -42,54 +42,54 @@ services:
       retries: 5
 
   # Backend API Service
-  backend:
-    build:
-      context: .
-      dockerfile: ./packages/backend/Dockerfile
-    container_name: cnh-backend
-    restart: unless-stopped
-    ports:
-      - "3001:3001"
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/postgres
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      JWT_SECRET: your_jwt_secret_here_please_change_in_production
-      CORS_ORIGIN: http://localhost:3000
-      PORT: 3001
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - cnh-network
-    volumes:
-      - ./packages/backend/uploads:/app/packages/backend/uploads
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+  # backend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./packages/backend/Dockerfile
+  #   container_name: cnh-backend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     NODE_ENV: production
+  #     DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/postgres
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     JWT_SECRET: your_jwt_secret_here_please_change_in_production
+  #     CORS_ORIGIN: http://localhost:3000
+  #     PORT: 3001
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   networks:
+  #     - cnh-network
+  #   volumes:
+  #     - ./packages/backend/uploads:/app/packages/backend/uploads
+  #   healthcheck:
+  #     test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 40s
 
-  # Frontend Service
-  frontend:
-    build:
-      context: .
-      dockerfile: ./packages/frontend/Dockerfile
-    container_name: cnh-frontend
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: production
-      VITE_API_URL: http://localhost:3001
-    depends_on:
-      - backend
-    networks:
-      - cnh-network
+  # # Frontend Service
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./packages/frontend/Dockerfile
+  #   container_name: cnh-frontend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     NODE_ENV: production
+  #     VITE_API_URL: http://localhost:3001
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - cnh-network
 
 volumes:
   postgres_data:
