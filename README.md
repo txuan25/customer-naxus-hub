@@ -18,14 +18,15 @@ cd customer-nexus-hub
 
 1. Ensure Node.js 18+ is active and install pnpm 8+ (for example, run `corepack enable pnpm`).
 2. For the first setup, execute `pnpm run setup` to install dependencies, run migrations, and seed sample data.
-3. Start the backend API in one terminal: `pnpm dev:backend`.
-4. Start the frontend in another terminal: `pnpm dev:frontend`.
+3. Once `pnpm run setup` completes, open two new terminal tabs: run `pnpm dev:backend` in one and `pnpm dev:frontend` in the other.
 
 ```bash
 pnpm run setup
 pnpm dev:backend
 pnpm dev:frontend
 ```
+
+The first command handles installation, Docker startup, migrations, and seeding; the next two should run in parallel (separate tabs) so the backend and frontend stay up together.
 
 The backend is served at `http://localhost:3000`, the Swagger docs are available at `http://localhost:3000/api-docs`, and the frontend runs at `http://localhost:3001` by default.
 
