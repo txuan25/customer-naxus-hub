@@ -170,6 +170,9 @@ pnpm typeorm migration:run       # Run migrations
 - Modern Docker uses `docker compose` (with space) instead of `docker-compose`
 - If you get "docker-compose: command not found", use `docker compose`
 
+### Frontend Shows Blank Screen
+- Refresh the browser after both `pnpm dev:backend` and `pnpm dev:frontend` are running; the frontend may need one reload once the API is ready.
+
 ### Port Already in Use
 ```bash
 # Check what's using port 3000
