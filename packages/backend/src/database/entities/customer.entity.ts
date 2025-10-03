@@ -4,18 +4,14 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
   OneToMany,
-  JoinColumn,
   Index,
 } from 'typeorm';
 import { CustomerStatus } from '../../common/enums/customer-status.enum';
-import { User } from './user.entity';
 import { Inquiry } from './inquiry.entity';
 
 @Entity('customers')
 @Index(['email'])
-@Index(['assignedTo'])
 export class Customer {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -36,19 +32,6 @@ export class Customer {
   @Column({ nullable: true })
   company?: string;
 
-  @Column({
-    type: 'enum',
-    enum: CustomerStatus,
-    default: CustomerStatus.PROSPECT,
-  })
-  status: CustomerStatus;
-
-  @Column({ type: 'jsonb', nullable: true })
-  metadata?: Record<string, any>;
-
-  @Column({ nullable: true })
-  notes?: string;
-
   @Column({ nullable: true })
   address?: string;
 
@@ -58,6 +41,39 @@ export class Customer {
   @Column({ nullable: true })
   country?: string;
 
+  @Column({
+    type: 'enum',
+    enum: ['active', 'inactive', 'suspended'],
+    default: 'active',
+  })
+  status: string;
+
+  @Column({
+    name: 'segment',
+    type: 'enum',
+    enum: ['premium', 'standard', 'basic', 'vip'],
+    default: 'standard'
+  })
+  segment: string;
+
+  @Column({
+    name: 'total_spent',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0
+  })
+  totalSpent: number;
+
+  @Column({ name: 'order_count', type: 'int', default: 0 })
+  orderCount: number;
+
+  @Column({ name: 'last_order_date', nullable: true })
+  lastOrderDate?: Date;
+
+  @Column({ type: 'jsonb', nullable: true })
+  metadata?: Record<string, any>;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
@@ -65,20 +81,6 @@ export class Customer {
   updatedAt: Date;
 
   // Relations
-  @ManyToOne(() => User, (user) => user.customersCreated)
-  @JoinColumn({ name: 'created_by' })
-  createdBy: User;
-
-  @Column({ name: 'created_by' })
-  createdById: string;
-
-  @ManyToOne(() => User, (user) => user.customersAssigned)
-  @JoinColumn({ name: 'assigned_to' })
-  assignedTo: User;
-
-  @Column({ name: 'assigned_to' })
-  assignedToId: string;
-
   @OneToMany(() => Inquiry, (inquiry) => inquiry.customer)
   inquiries: Inquiry[];
 
@@ -88,6 +90,6 @@ export class Customer {
   }
 
   get isActive(): boolean {
-    return this.status === CustomerStatus.ACTIVE;
+    return this.status === 'active';
   }
 }

@@ -111,7 +111,7 @@ export const ApprovalForm: React.FC<ApprovalFormProps> = ({
         <Space direction="vertical" size="small" style={{ width: '100%' }}>
           <Row gutter={16}>
             <Col span={12}>
-              <Text><strong>CSO:</strong> {response.createdBy.fullName}</Text>
+              <Text><strong>CSO:</strong> {response.responder.fullName}</Text>
             </Col>
             <Col span={12}>
               <Text><strong>Created:</strong> {new Date(response.createdAt).toLocaleDateString()}</Text>
@@ -124,29 +124,15 @@ export const ApprovalForm: React.FC<ApprovalFormProps> = ({
 
           <Divider />
           <Title level={5}>Response Content</Title>
-          <div style={{ 
-            backgroundColor: '#e6f7ff', 
-            padding: '16px', 
+          <div style={{
+            backgroundColor: '#e6f7ff',
+            padding: '16px',
             borderRadius: '6px',
             border: '1px solid #91d5ff',
             whiteSpace: 'pre-wrap'
           }}>
-            {response.message}
+            {response.responseText}
           </div>
-
-          {response.internalNotes && (
-            <>
-              <Title level={5} style={{ marginTop: 16 }}>Internal Notes</Title>
-              <Paragraph style={{ 
-                backgroundColor: '#fff7e6', 
-                padding: '12px', 
-                borderRadius: '6px',
-                marginBottom: 0
-              }}>
-                {response.internalNotes}
-              </Paragraph>
-            </>
-          )}
         </Space>
       </Card>
 

@@ -9,7 +9,7 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { Customer } from '../../../entities/customer.entity';
+import { Customer } from '../../../database/entities/customer.entity';
 import { Response } from '../../responses/entities/response.entity';
 
 export enum InquiryStatus {

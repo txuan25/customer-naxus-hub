@@ -64,12 +64,12 @@ const mockCSO = {
 
 const mockResponse: Response = {
   id: 'response-1',
-  message: 'Thank you for reaching out about the API integration issues. I understand this is affecting your production environment, so let me address this urgently.\n\nThe 401 errors you\'re experiencing are likely due to token expiration. Our API tokens have a 1-hour expiration by default. Please ensure your application is implementing proper token refresh logic.\n\nHere are the steps to resolve this:\n\n1. Check your token refresh implementation\n2. Verify you\'re using the latest API version (v2.1)\n3. Ensure proper error handling for token expiration\n\nI\'ve also escalated this to our technical team for further investigation. They will reach out within 2 hours with additional troubleshooting steps.\n\nPlease let me know if you need immediate assistance or have any other questions.',
-  internalNotes: 'Customer is on Enterprise plan - high priority. Technical team notified via Slack. Monitor for resolution within 24h.',
+  responseText: 'Thank you for reaching out about the API integration issues. I understand this is affecting your production environment, so let me address this urgently.\n\nThe 401 errors you\'re experiencing are likely due to token expiration. Our API tokens have a 1-hour expiration by default. Please ensure your application is implementing proper token refresh logic.\n\nHere are the steps to resolve this:\n\n1. Check your token refresh implementation\n2. Verify you\'re using the latest API version (v2.1)\n3. Ensure proper error handling for token expiration\n\nI\'ve also escalated this to our technical team for further investigation. They will reach out within 2 hours with additional troubleshooting steps.\n\nPlease let me know if you need immediate assistance or have any other questions.',
   status: ResponseStatus.PENDING_APPROVAL,
   inquiryId: 'inquiry-1',
   inquiry: mockInquiry,
-  createdBy: mockCSO,
+  responder: mockCSO,
+  responderId: mockCSO.id,
   createdAt: '2024-01-20T16:45:00Z',
   updatedAt: '2024-01-20T16:45:00Z',
 };
@@ -111,8 +111,8 @@ export const HighPriorityInquiry: Story = {
   args: {
     response: {
       ...mockResponse,
-      message: 'URGENT: I understand this is a critical production issue affecting your payment processing system. I am escalating this immediately to our senior technical team.\n\nImmediate actions taken:\n1. Created P1 ticket in our system\n2. Notified on-call engineer\n3. Scheduled emergency call within 30 minutes\n\nOur team lead will contact you directly at the phone number on file. In the meantime, please try the following workaround:\n\n- Switch to backup endpoint: api-backup.company.com\n- Use API key rotation if available\n\nWe will provide updates every 30 minutes until resolved.',
-      internalNotes: 'CRITICAL ISSUE - Payment processing down. CEO notified. War room activated.',
+      responseText: 'URGENT: I understand this is a critical production issue affecting your payment processing system. I am escalating this immediately to our senior technical team.\n\nImmediate actions taken:\n1. Created P1 ticket in our system\n2. Notified on-call engineer\n3. Scheduled emergency call within 30 minutes\n\nOur team lead will contact you directly at the phone number on file. In the meantime, please try the following workaround:\n\n- Switch to backup endpoint: api-backup.company.com\n- Use API key rotation if available\n\nWe will provide updates every 30 minutes until resolved.',
+      
     },
     inquiry: {
       ...mockInquiry,
@@ -136,8 +136,8 @@ export const SimpleInquiry: Story = {
   args: {
     response: {
       ...mockResponse,
-      message: 'Thank you for your question about our pricing plans.\n\nOur Enterprise plan includes:\n- Unlimited API calls\n- 24/7 support\n- Custom integrations\n- Dedicated account manager\n\nThe cost is $299/month with annual billing. I can schedule a call with our sales team to discuss your specific needs and potential discounts for volume usage.\n\nWould you prefer a call this week?',
-      internalNotes: 'Sales qualified lead - forward to sales team after approval.',
+      responseText: 'Thank you for your question about our pricing plans.\n\nOur Enterprise plan includes:\n- Unlimited API calls\n- 24/7 support\n- Custom integrations\n- Dedicated account manager\n\nThe cost is $299/month with annual billing. I can schedule a call with our sales team to discuss your specific needs and potential discounts for volume usage.\n\nWould you prefer a call this week?',
+      
     },
     inquiry: {
       ...mockInquiry,
@@ -195,10 +195,7 @@ export const WithoutInquiryContext: Story = {
 
 export const MinimalContext: Story = {
   args: {
-    response: {
-      ...mockResponse,
-      internalNotes: undefined, // No internal notes
-    },
+    response: mockResponse,
     // No inquiry or customer context
     loading: false,
   },

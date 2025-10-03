@@ -48,7 +48,7 @@ export const ResponseShow: React.FC = () => {
     if (!identity || !response) return false;
     // CSO can edit their own draft responses
     if (identity.role === UserRole.CSO) {
-      return response.createdBy.id === identity.id && response.status === ResponseStatus.DRAFT;
+      return response.responder.id === identity.id && response.status === ResponseStatus.DRAFT;
     }
     return false;
   };
@@ -184,7 +184,7 @@ export const ResponseShow: React.FC = () => {
                 <Button
                   type="default"
                   icon={<EyeOutlined />}
-                  onClick={() => show('inquiries', response.inquiry.id)}
+                  onClick={() => response.inquiry && show('inquiries', response.inquiry.id)}
                 >
                   View Inquiry
                 </Button>
@@ -209,34 +209,17 @@ export const ResponseShow: React.FC = () => {
               </div>
 
               <div>
-                <Paragraph style={{ 
-                  backgroundColor: '#f5f5f5', 
-                  padding: 16, 
+                <Paragraph style={{
+                  backgroundColor: '#f5f5f5',
+                  padding: 16,
                   borderRadius: 6,
                   whiteSpace: 'pre-wrap',
                   minHeight: 100
                 }}>
-                  {response.message}
+                  {response.responseText}
                 </Paragraph>
               </div>
 
-              {response.internalNotes && (identity?.role === UserRole.MANAGER || response.createdBy.id === identity?.id) && (
-                <>
-                  <Divider />
-                  <div>
-                    <Title level={5}>Internal Notes</Title>
-                    <div style={{ 
-                      backgroundColor: '#fff3cd', 
-                      padding: 16, 
-                      borderRadius: 6,
-                      borderLeft: '4px solid #ffc107',
-                      whiteSpace: 'pre-wrap'
-                    }}>
-                      <Text>{response.internalNotes}</Text>
-                    </div>
-                  </div>
-                </>
-              )}
 
               {response.inquiry && (
                 <>
@@ -250,19 +233,19 @@ export const ResponseShow: React.FC = () => {
                           <Button 
                             type="link" 
                             size="small"
-                            onClick={() => show('inquiries', response.inquiry.id)}
+                            onClick={() => response.inquiry && show('inquiries', response.inquiry.id)}
                           >
                             View Full Inquiry
                           </Button>
                         </div>
                         <Text type="secondary" style={{ fontSize: '12px' }}>
-                          Category: {response.inquiry.category?.replace('_', ' ').toUpperCase()}
+                          Category: {response.inquiry?.category?.replace('_', ' ').toUpperCase()}
                         </Text>
                         <Paragraph 
                           ellipsis={{ rows: 3, expandable: true }}
                           style={{ marginBottom: 0, fontSize: '14px' }}
                         >
-                          {response.inquiry.description}
+                          {response.inquiry?.subject}
                         </Paragraph>
                       </Space>
                     </Card>
@@ -308,14 +291,14 @@ export const ResponseShow: React.FC = () => {
               <Descriptions column={1} size="small">
                 <Descriptions.Item label="Name">
                   <Text strong>
-                    {response.createdBy.firstName} {response.createdBy.lastName}
+                    {response.responder.firstName} {response.responder.lastName}
                   </Text>
                 </Descriptions.Item>
                 <Descriptions.Item label="Role">
-                  <Tag>{response.createdBy.role}</Tag>
+                  <Tag>{response.responder.role}</Tag>
                 </Descriptions.Item>
                 <Descriptions.Item label="Email">
-                  <Text copyable>{response.createdBy.email}</Text>
+                  <Text copyable>{response.responder.email}</Text>
                 </Descriptions.Item>
               </Descriptions>
             </Card>

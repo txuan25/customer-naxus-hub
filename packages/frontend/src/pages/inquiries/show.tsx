@@ -41,14 +41,17 @@ export const InquiryShow: React.FC = () => {
   const inquiry = inquiryData?.data;
 
   const canCreateResponse = (inquiry: Inquiry): boolean => {
-    if (!identity) return false;
-    // CSO can create responses for assigned inquiries, Manager can create for all
-    if (identity.role === UserRole.CSO) {
-      return inquiry.assignedTo?.id === identity.id && 
-             [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+    if (!identity) {
+      return false;
     }
-    return identity.role === UserRole.MANAGER && 
-           [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+    
+    // CSO can only reply to OPEN and IN_PROGRESS inquiries
+    if (identity.role === UserRole.CSO) {
+      return [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+    }
+    
+    // Manager can create responses for all inquiry statuses
+    return identity.role === UserRole.MANAGER;
   };
 
   const handleCreateResponse = () => {
@@ -138,13 +141,13 @@ export const InquiryShow: React.FC = () => {
 
               <div>
                 <Title level={5}>Description</Title>
-                <Paragraph style={{ 
-                  backgroundColor: '#f5f5f5', 
-                  padding: 16, 
+                <Paragraph style={{
+                  backgroundColor: '#f5f5f5',
+                  padding: 16,
                   borderRadius: 6,
                   whiteSpace: 'pre-wrap'
                 }}>
-                  {inquiry.description}
+                  {inquiry.message}
                 </Paragraph>
               </div>
 
@@ -163,7 +166,7 @@ export const InquiryShow: React.FC = () => {
                           <Space direction="vertical" size="small" style={{ width: '100%' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <Text strong>
-                                Response by {response.createdBy.firstName} {response.createdBy.lastName}
+                                Response by {response.responder.firstName} {response.responder.lastName}
                               </Text>
                               <Space>
                                 <StatusBadge status={response.status} />
@@ -173,19 +176,8 @@ export const InquiryShow: React.FC = () => {
                               </Space>
                             </div>
                             <Paragraph style={{ marginBottom: 0 }}>
-                              {response.message}
+                              {response.responseText}
                             </Paragraph>
-                            {response.internalNotes && (
-                              <div style={{ 
-                                backgroundColor: '#fff3cd', 
-                                padding: 8, 
-                                borderRadius: 4,
-                                borderLeft: '4px solid #ffc107'
-                              }}>
-                                <Text strong style={{ fontSize: '12px' }}>Internal Notes: </Text>
-                                <Text style={{ fontSize: '12px' }}>{response.internalNotes}</Text>
-                              </div>
-                            )}
                           </Space>
                         </Card>
                       ))}

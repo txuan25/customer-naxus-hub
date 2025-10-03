@@ -19,7 +19,7 @@ import {
 } from '@refinedev/core';
 import { useParams, useSearchParams } from 'react-router';
 import { ResponseForm } from '../../components/Response/ResponseForm';
-import { Inquiry, User, UserRole, CreateResponseDto, ResponseStatus } from '../../types';
+import { Inquiry, User, UserRole, CreateResponseDto, ResponseStatus, InquiryStatus } from '../../types';
 
 const { Title } = Typography;
 
@@ -52,9 +52,9 @@ export const ResponseCreate: React.FC = () => {
 
   const canCreateResponse = (inquiry: Inquiry): boolean => {
     if (!identity || !inquiry) return false;
-    // CSO can create responses for assigned inquiries, Manager can create for all
+    // Any CSO can reply to any inquiry, Manager can create for all
     if (identity.role === UserRole.CSO) {
-      return inquiry.assignedTo?.id === identity.id;
+      return [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
     }
     return identity.role === UserRole.MANAGER;
   };

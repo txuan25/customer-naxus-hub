@@ -89,8 +89,7 @@ export const EditMode: Story = {
     loading: false,
     mode: 'edit',
     initialValues: {
-      message: 'Thank you for contacting us regarding your account access issue. I understand how frustrating this must be, especially with your important presentation tomorrow.\n\nI have reset your account credentials and sent you a new temporary password via email. Please check your inbox (including spam folder) and try logging in with the new password.',
-      internalNotes: 'Customer called twice about this issue. Account was locked due to multiple failed login attempts. Reset performed and temporary password generated.',
+      responseText: 'Thank you for contacting us regarding your account access issue. I understand how frustrating this must be, especially with your important presentation tomorrow.\n\nI have reset your account credentials and sent you a new temporary password via email. Please check your inbox (including spam folder) and try logging in with the new password.',
       inquiryId: mockInquiry.id,
     },
     onSubmit: (values: CreateResponseDto) => {

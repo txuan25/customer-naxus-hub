@@ -6,7 +6,7 @@ export const Login = () => {
       type="login"
       title="Customer Nexus Hub"
       formProps={{
-        initialValues: { email: "cso1@cnh.com", password: "Cso@123" },
+        initialValues: { email: "cso1@crm.com", password: "password123" },
       }}
       renderContent={(content, title) => (
         <div style={{
@@ -38,9 +38,9 @@ export const Login = () => {
               color: "#666"
             }}>
               <strong>Test Accounts:</strong><br/>
-              CSO: cso1@cnh.com / Cso@123<br/>
-              Manager: manager1@cnh.com / Manager@123<br/>
-              Admin: admin@cnh.com / Admin@123
+              CSO: cso1@crm.com / password123<br/>
+              Manager: manager@crm.com / password123<br/>
+              Admin: admin@crm.com / password123
             </div>
           </div>
         </div>

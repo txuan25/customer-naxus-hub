@@ -72,15 +72,45 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
   const { data: identity } = identityHook;
 
   const canCreateResponse = (inquiry: Inquiry): boolean => {
-    if (!identity) return false;
-    // CSO can create responses for assigned inquiries, Manager can create for all
-    if (identity.role === UserRole.CSO) {
-      return inquiry.assignedTo?.id === identity.id && 
-             [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+    if (!identity) {
+      return false;
     }
-    return identity.role === UserRole.MANAGER && 
-           [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+    
+    // CSO can only reply to OPEN and IN_PROGRESS inquiries
+    if (identity.role === UserRole.CSO) {
+      return [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+    }
+    
+    // Manager can create responses for all inquiry statuses
+    return identity.role === UserRole.MANAGER;
   };
+
+  // Sort inquiries: messages needing response first, then by priority
+  const sortedInquiries = React.useMemo(() => {
+    const sorted = [...inquiries].sort((a, b) => {
+      // First priority: messages that need response
+      const aNeeds = canCreateResponse(a) ? 1 : 0;
+      const bNeeds = canCreateResponse(b) ? 1 : 0;
+      
+      if (aNeeds !== bNeeds) {
+        return bNeeds - aNeeds; // Messages needing response come first
+      }
+
+      // Second priority: by priority level (URGENT > HIGH > MEDIUM > LOW)
+      const priorityOrder = [InquiryPriority.LOW, InquiryPriority.MEDIUM, InquiryPriority.HIGH, InquiryPriority.URGENT];
+      const aPriorityIndex = priorityOrder.indexOf(a.priority);
+      const bPriorityIndex = priorityOrder.indexOf(b.priority);
+      
+      if (aPriorityIndex !== bPriorityIndex) {
+        return bPriorityIndex - aPriorityIndex; // Higher priority comes first
+      }
+
+      // Third priority: by creation date (newest first)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
+    return sorted;
+  }, [inquiries, identity]);
 
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -163,28 +193,6 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
       onFilter: (value, record) => record.status === value,
     },
     {
-      title: 'Assigned To',
-      key: 'assignedTo',
-      render: (_, inquiry) => (
-        inquiry.assignedTo ? (
-          <Space>
-            <Text>{inquiry.assignedTo.firstName} {inquiry.assignedTo.lastName}</Text>
-          </Space>
-        ) : (
-          <Text type="secondary">Unassigned</Text>
-        )
-      ),
-      filters: identity?.role === UserRole.MANAGER ? [
-        { text: 'Assigned', value: 'assigned' },
-        { text: 'Unassigned', value: 'unassigned' },
-      ] : undefined,
-      onFilter: (value, record) => {
-        if (value === 'assigned') return !!record.assignedTo;
-        if (value === 'unassigned') return !record.assignedTo;
-        return true;
-      },
-    },
-    {
       title: 'Date',
       dataIndex: 'createdAt',
       key: 'createdAt',
@@ -194,7 +202,6 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
         </Tooltip>
       ),
       sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      defaultSortOrder: 'descend',
     },
     {
       title: 'Actions',
@@ -233,7 +240,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
   return (
     <DataTable
       columns={columns}
-      data={inquiries}
+      data={sortedInquiries}
       loading={loading}
       pagination={pagination}
       searchable={true}
