@@ -27,7 +27,7 @@ pnpm dev:backend
 pnpm dev:frontend
 ```
 
-The backend is served at `http://localhost:3000`, and the frontend runs at `http://localhost:5173` by default.
+The backend is served at `http://localhost:3000`, and the frontend runs at `http://localhost:3001` by default.
 
 To test the API, run:
 ```bash
