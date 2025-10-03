@@ -20,10 +20,10 @@ export class PaginationDto {
   @ApiPropertyOptional({ description: 'Field to sort by' })
   @IsOptional()
   @IsString()
-  sortBy?: string = 'createdAt';
+  sortBy?: string;
 
-  @ApiPropertyOptional({ enum: ['ASC', 'DESC'], default: 'DESC' })
+  @ApiPropertyOptional({ enum: ['ASC', 'DESC'] })
   @IsOptional()
   @IsString()
-  sortOrder?: 'ASC' | 'DESC' = 'DESC';
+  sortOrder?: 'ASC' | 'DESC';
 }

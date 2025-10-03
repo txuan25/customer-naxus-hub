@@ -85,33 +85,6 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
     return identity.role === UserRole.MANAGER;
   };
 
-  // Sort inquiries: messages needing response first, then by priority
-  const sortedInquiries = React.useMemo(() => {
-    const sorted = [...inquiries].sort((a, b) => {
-      // First priority: messages that need response
-      const aNeeds = canCreateResponse(a) ? 1 : 0;
-      const bNeeds = canCreateResponse(b) ? 1 : 0;
-      
-      if (aNeeds !== bNeeds) {
-        return bNeeds - aNeeds; // Messages needing response come first
-      }
-
-      // Second priority: by priority level (URGENT > HIGH > MEDIUM > LOW)
-      const priorityOrder = [InquiryPriority.LOW, InquiryPriority.MEDIUM, InquiryPriority.HIGH, InquiryPriority.URGENT];
-      const aPriorityIndex = priorityOrder.indexOf(a.priority);
-      const bPriorityIndex = priorityOrder.indexOf(b.priority);
-      
-      if (aPriorityIndex !== bPriorityIndex) {
-        return bPriorityIndex - aPriorityIndex; // Higher priority comes first
-      }
-
-      // Third priority: by creation date (newest first)
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
-
-    return sorted;
-  }, [inquiries, identity]);
-
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -202,6 +175,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
         </Tooltip>
       ),
       sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      defaultSortOrder: undefined, // Remove default sort to enable smart sorting
     },
     {
       title: 'Actions',
@@ -240,7 +214,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
   return (
     <DataTable
       columns={columns}
-      data={sortedInquiries}
+      data={inquiries}
       loading={loading}
       pagination={pagination}
       searchable={true}

@@ -56,14 +56,22 @@ export class InquiriesController {
     @Query('category') category?: InquiryCategory,
     @Query('customerId') customerId?: string,
     @Query('assignedTo') assignedTo?: string,
+    @CurrentUser() user?: any,
   ) {
+    console.log('DEBUG: Current user in controller:', {
+      user,
+      userKeys: user ? Object.keys(user) : null,
+      userId: user?.id,
+      userRole: user?.role,
+    });
+    
     return this.inquiriesService.findAll(paginationDto, {
       status,
       priority,
       category,
       customerId,
       assignedTo,
-    });
+    }, user);
   }
 
   @Get('statistics')
