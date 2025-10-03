@@ -188,9 +188,6 @@
 - Filter by status, CSO, date
 - Pagination
 
-### **UC-008: Basic Dashboard**
-- CSO: My customers count, my pending responses
-- Manager: Team stats, pending approvals count
 
 ---
 

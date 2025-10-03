@@ -9,32 +9,27 @@ A production-ready CRM platform built with TypeScript, NestJS, PostgreSQL, and R
 - Node.js 18+
 - pnpm 8+
 
-### Setup Instructions
-
-```bash
-# 1. Clone repository
 git clone <repository-url>
 cd customer-nexus-hub
-
-# 2. Start Docker services (PostgreSQL + Redis)
-# Note: Use 'docker compose' (with space) for Docker Compose v2
 docker compose up -d
+### Local Build & Run
 
-# 3. Install dependencies
-pnpm install
+After cloning the project, simply run the following command in the root directory:
 
-# 4. Setup environment
-cp .env.example .env
+```bash
+pnpm setup && pnpm quick-start
+```
 
-# 5. Run database seeds
-cd packages/backend
-pnpm seed:run
+This command will automatically:
+- Install dependencies
+- Start Docker services (PostgreSQL, Redis)
+- Run migrations and seed the database
+- Start the backend in development mode
 
-# 6. Start backend
-pnpm start:dev
+After setup, you can access the backend API at `http://localhost:3000`.
 
-# 7. Test the API
-# From project root
+To test the API, run:
+```bash
 ./test-backend.sh
 ```
 
@@ -81,17 +76,7 @@ customer-nexus-hub/
 - XSS protection
 - CORS configuration
 
-## 📊 Role Permissions
 
-| Feature | Admin | Manager | CSO |
-|---------|-------|---------|-----|
-| View all customers | ✅ | ✅ | ❌ |
-| View assigned customers | ✅ | ✅ | ✅ |
-| Create customers | ✅ | ✅ | ✅ |
-| Update any customer | ✅ | ✅ | ❌ |
-| Update assigned customers | ✅ | ✅ | ✅ |
-| Delete customers | ✅ | ✅ | ❌ |
-| Assign customers | ✅ | ✅ | ❌ |
 
 ## 🧪 Testing
 
@@ -103,7 +88,7 @@ customer-nexus-hub/
 # 1. Login
 curl -X POST http://localhost:3000/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email": "admin@example.com", "password": "password123"}'
+  -d '{"email": "manager@crm.com", "password": "password123"}'
 
 # 2. Use token for protected endpoints
 curl http://localhost:3000/api/v1/customers \
