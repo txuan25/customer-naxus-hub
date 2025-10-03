@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Response, ResponseStatus } from './entities/response.entity';
+import { Response } from '../../database/entities/response.entity';
+import { ResponseStatus } from '../../common/enums/response-status.enum';
 import { CreateResponseDto } from './dto/create-response.dto';
 import { UpdateResponseDto } from './dto/update-response.dto';
 import { ApproveResponseDto, RejectResponseDto } from './dto/approve-response.dto';
 import { PaginationDto } from '@common/dto/pagination.dto';
-import { UserRole } from '@entities/user.entity';
-import { InquiryStatus } from '@modules/inquiries/entities/inquiry.entity';
+import { UserRole } from '../../common/enums/user-role.enum';
+import { InquiryStatus } from '../../common/enums/inquiry-status.enum';
 import { InquiriesService } from '@modules/inquiries/inquiries.service';
 
 @Injectable()
@@ -32,8 +33,9 @@ export class ResponsesService {
 
     const response = this.responseRepository.create({
       ...createResponseDto,
-      responderId: currentUser.id,
-      status: ResponseStatus.DRAFT,
+      responderId: currentUser.userId, // Sửa từ currentUser.id thành currentUser.userId
+      status: createResponseDto.status || ResponseStatus.DRAFT,
+      responseText: createResponseDto.responseText || '', // Provide default empty string
     });
 
     return this.responseRepository.save(response);
@@ -45,7 +47,6 @@ export class ResponsesService {
       status?: ResponseStatus;
       inquiryId?: string;
       responderId?: string;
-      approvedById?: string;
     },
   ) {
     const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
@@ -53,7 +54,6 @@ export class ResponsesService {
     const query = this.responseRepository.createQueryBuilder('response');
     query.leftJoinAndSelect('response.inquiry', 'inquiry');
     query.leftJoinAndSelect('response.responder', 'responder');
-    query.leftJoinAndSelect('response.approvedBy', 'approvedBy');
     query.leftJoinAndSelect('inquiry.customer', 'customer');
 
     if (filters?.status) {
@@ -68,9 +68,6 @@ export class ResponsesService {
       query.andWhere('response.responderId = :responderId', { responderId: filters.responderId });
     }
 
-    if (filters?.approvedById) {
-      query.andWhere('response.approvedById = :approvedById', { approvedById: filters.approvedById });
-    }
 
     query.orderBy(`response.${sortBy}`, sortOrder as 'ASC' | 'DESC');
     query.skip((page - 1) * limit);
@@ -90,7 +87,7 @@ export class ResponsesService {
   async findOne(id: string): Promise<Response> {
     const response = await this.responseRepository.findOne({
       where: { id },
-      relations: ['inquiry', 'inquiry.customer', 'responder', 'approvedBy'],
+      relations: ['inquiry', 'inquiry.customer', 'responder'],
     });
 
     if (!response) {
@@ -163,7 +160,6 @@ export class ResponsesService {
     }
 
     response.status = ResponseStatus.APPROVED;
-    response.approvedById = currentUser.id;
     response.approvedAt = new Date();
     response.approvalNotes = approveDto.approvalNotes || '';
 
@@ -191,7 +187,6 @@ export class ResponsesService {
     }
 
     response.status = ResponseStatus.REJECTED;
-    response.approvedById = currentUser.id;
     response.rejectedAt = new Date();
     response.rejectionReason = rejectDto.rejectionReason;
 

@@ -77,7 +77,7 @@ export const ResponseForm: React.FC<ResponseFormProps> = ({
               borderRadius: 6,
               marginTop: 8
             }}>
-              <Text>{inquiry.description}</Text>
+              <Text>{inquiry.message}</Text>
             </div>
           </Space>
         </Card>

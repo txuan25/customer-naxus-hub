@@ -2,7 +2,8 @@ import { PartialType } from '@nestjs/swagger';
 import { CreateInquiryDto } from './create-inquiry.dto';
 import { IsEnum, IsOptional, IsUUID, IsString } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { InquiryStatus, InquiryPriority, InquiryCategory } from '../entities/inquiry.entity';
+import { InquiryStatus, InquiryPriority } from '../../../common/enums/inquiry-status.enum';
+import { InquiryCategory } from '../../../database/entities/inquiry.entity';
 
 export class UpdateInquiryDto extends PartialType(CreateInquiryDto) {
   @ApiPropertyOptional({ enum: InquiryStatus })

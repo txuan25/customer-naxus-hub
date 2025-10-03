@@ -25,8 +25,9 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from '@nestjs/swagger';
-import { UserRole } from '@entities/user.entity';
-import { InquiryStatus, InquiryPriority, InquiryCategory } from './entities/inquiry.entity';
+import { UserRole } from '../../common/enums/user-role.enum';
+import { InquiryStatus, InquiryPriority } from '../../common/enums/inquiry-status.enum';
+import { InquiryCategory } from '../../database/entities/inquiry.entity';
 
 @ApiTags('inquiries')
 @ApiBearerAuth()

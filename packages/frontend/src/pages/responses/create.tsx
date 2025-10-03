@@ -54,7 +54,7 @@ export const ResponseCreate: React.FC = () => {
     if (!identity || !inquiry) return false;
     // Any CSO can reply to any inquiry, Manager can create for all
     if (identity.role === UserRole.CSO) {
-      return [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+      return [InquiryStatus.PENDING, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
     }
     return identity.role === UserRole.MANAGER;
   };

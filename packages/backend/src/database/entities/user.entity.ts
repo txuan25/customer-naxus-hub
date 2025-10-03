@@ -55,11 +55,12 @@ export class User {
   updatedAt: Date;
 
   // Relations
-  @OneToMany(() => Response, (response) => response.respondedBy)
+  @OneToMany(() => Response, (response) => response.responder)
   responses: Response[];
 
-  @OneToMany(() => Response, (response) => response.approvedBy)
-  approvedResponses: Response[];
+  // Note: approvedBy relation removed since approved_by column doesn't exist in database
+  // @OneToMany(() => Response, (response) => response.approvedBy)
+  // approvedResponses: Response[];
 
   // Virtual properties
   @Expose()

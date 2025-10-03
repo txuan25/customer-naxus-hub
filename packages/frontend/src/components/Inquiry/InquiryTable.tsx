@@ -78,7 +78,7 @@ export const InquiryTable: React.FC<InquiryTableProps> = ({
     
     // CSO can only reply to OPEN and IN_PROGRESS inquiries
     if (identity.role === UserRole.CSO) {
-      return [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+      return [InquiryStatus.PENDING, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
     }
     
     // Manager can create responses for all inquiry statuses

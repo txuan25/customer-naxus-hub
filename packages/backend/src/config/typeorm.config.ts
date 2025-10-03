@@ -13,7 +13,7 @@ const AppDataSource = new DataSource({
   password: process.env.DATABASE_PASSWORD || 'crm_password',
   database: process.env.DATABASE_NAME || 'crm_db',
   entities: [
-    join(__dirname, '../entities/**/*.entity{.ts,.js}'),
+    join(__dirname, '../database/entities/**/*.entity{.ts,.js}'),
     join(__dirname, '../modules/**/*.entity{.ts,.js}')
   ],
   migrations: [join(__dirname, '../migrations/**/*{.ts,.js}')],

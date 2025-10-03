@@ -1,9 +1,7 @@
 export enum InquiryStatus {
-  OPEN = 'open',
+  PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
-  PENDING_APPROVAL = 'pending_approval',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
+  RESPONDED = 'responded',
   CLOSED = 'closed',
 }
 

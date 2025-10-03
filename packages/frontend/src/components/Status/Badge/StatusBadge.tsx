@@ -53,9 +53,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   
   // Map inquiry statuses to unique keys
   if (Object.values(InquiryStatus).includes(status as InquiryStatus)) {
-    if (status === InquiryStatus.APPROVED) configKey = 'inquiry_approved';
-    else if (status === InquiryStatus.REJECTED) configKey = 'inquiry_rejected';
-    else if (status === InquiryStatus.PENDING_APPROVAL) configKey = 'pending_approval';
+    if (status === InquiryStatus.RESPONDED) configKey = 'inquiry_approved';
+    else if (status === InquiryStatus.CLOSED) configKey = 'inquiry_rejected';
+    else if (status === InquiryStatus.PENDING) configKey = 'pending_approval';
   }
   
   // Map response statuses to unique keys  

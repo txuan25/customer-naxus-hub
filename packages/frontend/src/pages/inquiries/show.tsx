@@ -47,7 +47,7 @@ export const InquiryShow: React.FC = () => {
     
     // CSO can only reply to OPEN and IN_PROGRESS inquiries
     if (identity.role === UserRole.CSO) {
-      return [InquiryStatus.OPEN, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
+      return [InquiryStatus.PENDING, InquiryStatus.IN_PROGRESS].includes(inquiry.status);
     }
     
     // Manager can create responses for all inquiry statuses
@@ -214,8 +214,8 @@ export const InquiryShow: React.FC = () => {
             <Card title="Assignment" size="small">
               <Descriptions column={1} size="small">
                 <Descriptions.Item label="Assigned To">
-                  {inquiry.assignedTo ? (
-                    <Text>{inquiry.assignedTo.firstName} {inquiry.assignedTo.lastName}</Text>
+                  {inquiry.assignee ? (
+                    <Text>{inquiry.assignee.firstName} {inquiry.assignee.lastName}</Text>
                   ) : (
                     <Text type="secondary">Unassigned</Text>
                   )}

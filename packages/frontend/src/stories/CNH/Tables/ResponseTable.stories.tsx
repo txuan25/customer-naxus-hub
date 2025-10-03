@@ -51,7 +51,7 @@ const mockResponses: Response[] = [
       subject: 'Billing inquiry about recent charges',
       description: 'Questions about charges on latest invoice',
       priority: InquiryPriority.MEDIUM,
-      status: InquiryStatus.APPROVED,
+      status: InquiryStatus.RESPONDED,
       category: InquiryCategory.BILLING,
       customerId: 'cust-2',
       customer: {
@@ -97,7 +97,7 @@ const mockResponses: Response[] = [
       subject: 'Feature request for mobile app',
       description: 'Request to add dark mode to mobile application',
       priority: InquiryPriority.LOW,
-      status: InquiryStatus.OPEN,
+      status: InquiryStatus.PENDING,
       category: InquiryCategory.FEATURE_REQUEST,
       customerId: 'cust-3',
       customer: {
@@ -132,7 +132,7 @@ const mockResponses: Response[] = [
       subject: 'Critical system error',
       description: 'Application crashes when trying to save data',
       priority: InquiryPriority.URGENT,
-      status: InquiryStatus.REJECTED,
+      status: InquiryStatus.CLOSED,
       category: InquiryCategory.TECHNICAL,
       customerId: 'cust-4',
       customer: {

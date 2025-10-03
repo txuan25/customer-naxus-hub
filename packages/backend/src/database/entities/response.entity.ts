@@ -14,13 +14,13 @@ import { Inquiry } from './inquiry.entity';
 
 @Entity('responses')
 @Index(['inquiryId', 'status'])
-@Index(['respondedById'])
 export class Response {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'text' })
-  message: string;
+  @Column({ name: 'response_text', type: 'text' })
+  responseText: string;
+
 
   @Column({
     type: 'enum',
@@ -38,22 +38,8 @@ export class Response {
   @Column({ name: 'rejection_reason', type: 'text', nullable: true })
   rejectionReason?: string;
 
-  @Column({ type: 'jsonb', nullable: true })
-  attachments?: Array<{
-    filename: string;
-    url: string;
-    size: number;
-    mimeType: string;
-  }>;
 
-  @Column({ name: 'email_sent', default: false })
-  emailSent: boolean;
 
-  @Column({ name: 'email_sent_at', nullable: true })
-  emailSentAt?: Date;
-
-  @Column({ nullable: true })
-  subject?: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -70,18 +56,20 @@ export class Response {
   inquiryId: string;
 
   @ManyToOne(() => User, (user) => user.responses)
-  @JoinColumn({ name: 'responded_by' })
-  respondedBy: User;
+  @JoinColumn({ name: 'responder_id' })
+  responder: User;
 
-  @Column({ name: 'responded_by' })
-  respondedById: string;
+  @Column({ name: 'responder_id' })
+  responderId: string;
 
-  @ManyToOne(() => User, (user) => user.approvedResponses, { nullable: true })
-  @JoinColumn({ name: 'approved_by' })
-  approvedBy?: User;
+  @Column({ name: 'approved_at', type: 'timestamp', nullable: true })
+  approvedAt?: Date;
 
-  @Column({ name: 'approved_by', nullable: true })
-  approvedById?: string;
+  @Column({ name: 'rejected_at', type: 'timestamp', nullable: true })
+  rejectedAt?: Date;
+
+  @Column({ type: 'jsonb', nullable: true })
+  metadata?: Record<string, any>;
 
   // Virtual properties
   get isDraft(): boolean {
@@ -117,7 +105,7 @@ export class Response {
       throw new Error('Only pending responses can be approved');
     }
     this.status = ResponseStatus.APPROVED;
-    this.approvedById = userId;
+    this.approvedAt = new Date();
     if (notes) {
       this.approvalNotes = notes;
     }
@@ -128,7 +116,7 @@ export class Response {
       throw new Error('Only pending responses can be rejected');
     }
     this.status = ResponseStatus.REJECTED;
-    this.approvedById = userId;
+    this.rejectedAt = new Date();
     this.rejectionReason = reason;
   }
 
@@ -138,7 +126,5 @@ export class Response {
     }
     this.status = ResponseStatus.SENT;
     this.sentAt = new Date();
-    this.emailSent = true;
-    this.emailSentAt = new Date();
   }
 }

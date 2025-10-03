@@ -60,11 +60,9 @@ export interface CustomerListResponse {
 
 // Inquiry enums
 export enum InquiryStatus {
-  OPEN = 'open',
+  PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
-  PENDING_APPROVAL = 'pending_approval',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
+  RESPONDED = 'responded',
   CLOSED = 'closed',
 }
 
@@ -103,7 +101,18 @@ export interface Inquiry {
   category: InquiryCategory;
   customerId: string;
   customer?: Customer;
-  assignedTo?: User;
+  assignedTo?: string;
+  assignee?: User;
+  attachments?: Array<{
+    filename: string;
+    url: string;
+    size: number;
+    mimeType: string;
+  }>;
+  tags?: string[];
+  metadata?: Record<string, any>;
+  resolutionNotes?: string;
+  resolvedAt?: string;
   createdAt: string;
   updatedAt: string;
   responses?: Response[];
@@ -126,15 +135,27 @@ export interface InquiryReference {
 export interface Response {
   id: string;
   responseText: string;
+  message: string;
   status: ResponseStatus;
   inquiryId: string;
   inquiry?: InquiryReference;
   responder: User;
   responderId: string;
+  respondedBy: User;
+  respondedById: string;
   approvedBy?: User;
   approvedById?: string;
   approvalNotes?: string;
   rejectionReason?: string;
+  attachments?: Array<{
+    filename: string;
+    url: string;
+    size: number;
+    mimeType: string;
+  }>;
+  emailSent: boolean;
+  emailSentAt?: string;
+  subject?: string;
   metadata?: Record<string, any>;
   sentAt?: string;
   approvedAt?: string;

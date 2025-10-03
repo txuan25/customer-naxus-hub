@@ -26,8 +26,8 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from '@nestjs/swagger';
-import { UserRole } from '@entities/user.entity';
-import { ResponseStatus } from './entities/response.entity';
+import { UserRole } from '../../common/enums/user-role.enum';
+import { ResponseStatus } from '../../common/enums/response-status.enum';
 
 @ApiTags('responses')
 @ApiBearerAuth()
@@ -52,19 +52,16 @@ export class ResponsesController {
   @ApiQuery({ name: 'status', required: false, enum: ResponseStatus })
   @ApiQuery({ name: 'inquiryId', required: false })
   @ApiQuery({ name: 'responderId', required: false })
-  @ApiQuery({ name: 'approvedById', required: false })
   findAll(
     @Query() paginationDto: PaginationDto,
     @Query('status') status?: ResponseStatus,
     @Query('inquiryId') inquiryId?: string,
     @Query('responderId') responderId?: string,
-    @Query('approvedById') approvedById?: string,
   ) {
     return this.responsesService.findAll(paginationDto, {
       status,
       inquiryId,
       responderId,
-      approvedById,
     });
   }
 

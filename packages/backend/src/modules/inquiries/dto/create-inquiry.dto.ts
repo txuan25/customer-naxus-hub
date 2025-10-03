@@ -1,6 +1,7 @@
 import { IsString, IsEnum, IsUUID, IsOptional, IsArray, IsObject } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { InquiryPriority, InquiryCategory } from '../entities/inquiry.entity';
+import { InquiryPriority } from '../../../common/enums/inquiry-status.enum';
+import { InquiryCategory } from '../../../database/entities/inquiry.entity';
 
 export class CreateInquiryDto {
   @ApiProperty({ description: 'Subject of the inquiry' })

@@ -100,7 +100,7 @@ export const ApprovalForm: React.FC<ApprovalFormProps> = ({
               borderRadius: '6px',
               marginBottom: 0
             }}>
-              {inquiry.description}
+              {inquiry.message}
             </Paragraph>
           </>
         )}

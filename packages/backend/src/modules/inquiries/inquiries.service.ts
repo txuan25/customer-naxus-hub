@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Inquiry, InquiryStatus, InquiryPriority, InquiryCategory } from './entities/inquiry.entity';
+import { Inquiry, InquiryCategory } from '../../database/entities/inquiry.entity';
+import { InquiryStatus, InquiryPriority } from '../../common/enums/inquiry-status.enum';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
 import { UpdateInquiryDto } from './dto/update-inquiry.dto';
 import { PaginationDto } from '@common/dto/pagination.dto';
-import { UserRole } from '@entities/user.entity';
+import { UserRole } from '../../common/enums/user-role.enum';
 
 @Injectable()
 export class InquiriesService {
@@ -96,10 +97,10 @@ export class InquiriesService {
     // Add computed column for response priority based on user role
     let responsePriorityCase = '';
     if (currentUser.role === UserRole.CSO) {
-      // CSO can respond to OPEN and IN_PROGRESS
+      // CSO can respond to PENDING and IN_PROGRESS
       responsePriorityCase = `
         CASE
-          WHEN inquiry.status IN ('open', 'in_progress') THEN 1
+          WHEN inquiry.status IN ('pending', 'in_progress') THEN 1
           ELSE 0
         END
       `;

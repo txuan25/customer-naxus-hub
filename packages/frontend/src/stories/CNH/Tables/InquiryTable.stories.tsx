@@ -7,9 +7,9 @@ const mockInquiries: Inquiry[] = [
   {
     id: '1',
     subject: 'Unable to access account',
-    description: 'I cannot log into my account after changing my password. Please help.',
+    message: 'I cannot log into my account after changing my password. Please help.',
     priority: InquiryPriority.HIGH,
-    status: InquiryStatus.OPEN,
+    status: InquiryStatus.PENDING,
     category: InquiryCategory.TECHNICAL,
     customerId: 'cust-1',
     customer: {
@@ -21,7 +21,8 @@ const mockInquiries: Inquiry[] = [
       company: 'Acme Corp',
       createdAt: '2024-01-15T10:30:00Z'
     },
-    assignedTo: {
+    assignedTo: 'user-1',
+    assignee: {
       id: 'user-1',
       email: 'sarah.wilson@company.com',
       firstName: 'Sarah',
@@ -35,7 +36,7 @@ const mockInquiries: Inquiry[] = [
   {
     id: '2',
     subject: 'Billing inquiry about recent charges',
-    description: 'I have questions about the charges on my latest invoice. Some items seem incorrect.',
+    message: 'I have questions about the charges on my latest invoice. Some items seem incorrect.',
     priority: InquiryPriority.MEDIUM,
     status: InquiryStatus.IN_PROGRESS,
     category: InquiryCategory.BILLING,
@@ -49,7 +50,8 @@ const mockInquiries: Inquiry[] = [
       company: 'Tech Solutions',
       createdAt: '2024-01-14T14:20:00Z'
     },
-    assignedTo: {
+    assignedTo: 'user-2',
+    assignee: {
       id: 'user-2',
       email: 'mike.johnson@company.com',
       firstName: 'Mike',
@@ -63,9 +65,9 @@ const mockInquiries: Inquiry[] = [
   {
     id: '3',
     subject: 'Feature request for mobile app',
-    description: 'Would it be possible to add dark mode to the mobile application?',
+    message: 'Would it be possible to add dark mode to the mobile application?',
     priority: InquiryPriority.LOW,
-    status: InquiryStatus.PENDING_APPROVAL,
+    status: InquiryStatus.PENDING,
     category: InquiryCategory.FEATURE_REQUEST,
     customerId: 'cust-3',
     customer: {
@@ -82,7 +84,7 @@ const mockInquiries: Inquiry[] = [
   {
     id: '4',
     subject: 'Service complaint - slow response times',
-    description: 'The system has been very slow for the past week. This is affecting our business operations.',
+    message: 'The system has been very slow for the past week. This is affecting our business operations.',
     priority: InquiryPriority.URGENT,
     status: InquiryStatus.CLOSED,
     category: InquiryCategory.COMPLAINT,
@@ -96,7 +98,8 @@ const mockInquiries: Inquiry[] = [
       company: 'Enterprise LLC',
       createdAt: '2024-01-12T09:00:00Z'
     },
-    assignedTo: {
+    assignedTo: 'user-1',
+    assignee: {
       id: 'user-1',
       email: 'sarah.wilson@company.com',
       firstName: 'Sarah',
@@ -230,7 +233,7 @@ export const HighPriorityOnly: Story = {
 export const OpenInquiries: Story = {
   args: {
     inquiries: mockInquiries.filter(inquiry =>
-      inquiry.status === InquiryStatus.OPEN || inquiry.status === InquiryStatus.IN_PROGRESS
+      inquiry.status === InquiryStatus.PENDING || inquiry.status === InquiryStatus.IN_PROGRESS
     ),
     loading: false,
     pagination: {

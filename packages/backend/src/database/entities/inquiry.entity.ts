@@ -12,6 +12,16 @@ import {
 import { InquiryStatus, InquiryPriority } from '../../common/enums/inquiry-status.enum';
 import { Customer } from './customer.entity';
 import { Response } from './response.entity';
+import { User } from './user.entity';
+
+export enum InquiryCategory {
+  GENERAL = 'general',
+  TECHNICAL = 'technical',
+  BILLING = 'billing',
+  COMPLAINT = 'complaint',
+  FEATURE_REQUEST = 'feature_request',
+  SUPPORT = 'support',
+}
 
 @Entity('inquiries')
 @Index(['customerId', 'status'])
@@ -29,7 +39,7 @@ export class Inquiry {
   @Column({
     type: 'enum',
     enum: InquiryStatus,
-    default: InquiryStatus.OPEN,
+    default: InquiryStatus.PENDING,
   })
   status: InquiryStatus;
 
@@ -40,25 +50,27 @@ export class Inquiry {
   })
   priority: InquiryPriority;
 
-  @Column({ nullable: true })
-  category?: string;
+  @Column({
+    type: 'enum',
+    enum: InquiryCategory,
+    default: InquiryCategory.GENERAL,
+  })
+  category: InquiryCategory;
+
+
+  @Column({ type: 'simple-array', nullable: true })
+  tags: string[];
 
   @Column({ type: 'jsonb', nullable: true })
-  attachments?: Array<{
-    filename: string;
-    url: string;
-    size: number;
-    mimeType: string;
-  }>;
+  metadata: Record<string, any>;
 
-  @Column({ nullable: true })
-  tags?: string;
+  @Column({ name: 'assigned_to', nullable: true })
+  assignedTo: string;
 
-  @Column({ name: 'resolution_notes', type: 'text', nullable: true })
-  resolutionNotes?: string;
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'assigned_to' })
+  assignee: User;
 
-  @Column({ name: 'resolved_at', nullable: true })
-  resolvedAt?: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -78,16 +90,16 @@ export class Inquiry {
   responses: Response[];
 
   // Virtual properties
-  get isOpen(): boolean {
-    return this.status === InquiryStatus.OPEN;
+  get isPending(): boolean {
+    return this.status === InquiryStatus.PENDING;
   }
 
-  get isPending(): boolean {
-    return this.status === InquiryStatus.PENDING_APPROVAL;
+  get isInProgress(): boolean {
+    return this.status === InquiryStatus.IN_PROGRESS;
   }
 
   get isResolved(): boolean {
-    return [InquiryStatus.APPROVED, InquiryStatus.CLOSED].includes(this.status);
+    return [InquiryStatus.RESPONDED, InquiryStatus.CLOSED].includes(this.status);
   }
 
   get isHighPriority(): boolean {
@@ -99,11 +111,7 @@ export class Inquiry {
     this.status = InquiryStatus.IN_PROGRESS;
   }
 
-  markAsResolved(notes?: string): void {
+  markAsResolved(): void {
     this.status = InquiryStatus.CLOSED;
-    this.resolvedAt = new Date();
-    if (notes) {
-      this.resolutionNotes = notes;
-    }
   }
 }
